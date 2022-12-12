@@ -374,4 +374,285 @@ Unterteile Graoh so, dass Kanten zwischen den Mengen minimale Kantengewichte hab
 - Viele doppelte Zahlen
 - Quicksort kann man besser machen. indem man 3-Wege Split Quicksort macht
 - In Standard lib ist kein 3 wege split implementiert
+- Rekursionstiefe ein Problem
+
+## Heap-sort
+- Heap ist ein Array als Binärbaum vorgestellt
+- Heap erfüllt die Heap-bedingung (Nachfolger kleiner als vorgänger  (bei maxheap) bei minheap andersrum)
+- Ablauf: Zahlen Tauschen -> Versickern(wegen verletzter heap bedingung) -> Tauschen -> versickern etc
+- höchstens n-1 viele Vertauschungen -> Versickern (log n), weil Binärbaum Tiefe log n hat.
+- Initialer Schritt heap erstellen
+- Heap erstellen dauert n log n, weil nur versickerungsschritte
+- Auch in linearer Zeit möglich
+
+### Warum nimmt man kein Heap-sort
+- Man hat große Sprünge im Speicher -> Viele Cache Misses
+- Cache misses -> ca. 50-fache Zugriffszeit, deshalb ist mittlere Laufzeit schlechter als Quicksort
+- Quicksort besseres Cache Verhalten
+
+### Merge-sort
+Benötigt linear viel Speicher und wird deshalb nicht so gerne verwendet
+
+## Wie zeigt man die Untere Schranke
+mithilfe von Entscheidungsbäumen
+Stelle entscheidungsbaum auf, um Laufzeit des Algorithmuses zu ermitteln
+Laufzeit ist Wurzel bis Blatt für eine Konkrete Situation
+- Worst case laufzeit ist maximale Tiefe
+- Mittlere Blattanzahl ist average Laufzeit
+- es gibt n! viele Blätter (Permutationen)
+- Beweis erfolgt mithilfe der Stirling Formel und logartimus regeln
+- Average Laufzeit erfolgt mithilfe von Widerspruch
+
+## Sortieren mit SChlüsselvergleichen geht nicht besser als O(nlog n)
+- Bessere Verfahren sind Counting Sort, Radix-Sort, Bucket-Sort
+
+### Counting sort
+- Fester Wertebereich. Zähle wie oft Array gefunden wird.s
+- benutze Count Array in größe des Wertebereiches
+- Bilde Summen auf dem Count array -> Anschließend kann man ablesen welche Zahl an welche Stelle geschirebn werden kann.
+
+### Radix-sort 
+funktioniert nur für integer werte, niht für double werte, für strings auch nicht, deshalb nicht in standardbib verwndet
+
+### Starke zusammenhangskomponente
+maximal: Es darf kein Knoten hinzugenommen werden und es bleibt weiterhin eine Starke zusammenhangskomponente
+- müssen maximal sein
+- schwach zusammenhängend,wenn man Kantenrichtungen ignoriert
+- laufzeit O(V+E)
+- Tiefensuche zum rausfinden ob Graph zusammenhängend ist
+
+## Anmerkung
+Keine Querkanten, forwärtskanten bei ungerichteten Graphen
+- Aus Querkanten würden Baumkanten werden
+- Man muss gucken ob es Rückwärtskanten gibt, die höher als eine Schnitttkanten läuft
+- Teilgraphen können nur über queerkanten verbunden werden
+- wichtig ist wie weit Rückwärtskanten zurückgehen (das ist der low Wert)
+
+## Spannbäume
+Ein Spannbaum Teilgraph eines ungerichteten Graphen, mit der gleichen Knotenmenge mit genau V-1 vielen Kanten und zusammenhängend ist
+- man benötigt Kostenfunktion
+
+
+## Baum ist ein zusammenhängender azyklischer Graph
+- muss Kreisfrei sein
+
+## Kruskals Algorithmus
+- Union und findSet Operationen
+
+## Übung
+- h=0
+- $h^2=1$
+- höhe ändert sich nur wenn Bäume den gleichen Rang haben
+- $2^h+21h=2*2^h=2*2^{h+1}$
+- E <= V^2
+
+## Warum ist es nicht günstiger alle Knoten unter die Wurzel zu hängen
+- Beschleunigung durch Pfadkomprimierung
+- Vorgänger speichern
+- Ziel ist das Verringern der Baumhöhe
+
+## Union Find algorithmus
+- Apspeichern von Mengen, macht Union und Find Operationen schnell
+A = {2,3,5,7,11}
+B = {3,5,7,9,13}
+Laufzeit = Summe der Beiden Längen
+
+## Prim Algorithmus:
+- Laufzeit je nach implementiertem ALgorithmus
+- Binärheap bei vielen Kanten teilweise schlechter
+
+## Kürzeste Wege
+Für kürzeste Wege gilt die Dreiecksungleichung
+
+### Dijkstra Algorithmus
+- S hat nichts mit dem Algorithmus zu tun, nur für Beweis notwendig
+- Dijkstra zu modifizieren, ändert Laufzeit, eventuell läuft man in endlosschleifens
+- Keine Negativen Kantengewichte
+- verwende stattbesseden Bellman/Ford
+
+## Bellman/Ford
+- negative Kantengewichte
+- Beschleunigung bei azyklischen Grpahen. Topologische Sortierung (Tiefensuche)
+
+## Floyd Warshall
+Bei einem kürzesten Weg sind auch alle Teilwege kürzeste Wege (Optimalitätsprinzip)
+Laufzeit $V^3$
+- Warum verwendet man 2Dimensionales Array bei 3 Parametern?
+- Kreis negativer länge erkennen: Diagonale angucken
+
+## Transitiver Abschluss (Warshall)
+welche Knoten stehen in Beziehung zueinander
+- 1->2->3->4->5
+- 1->3, 3->5, 2->4, etc
+
+# Netzwerke
+- Flüsse
+- Wieviel Strom kann fließen,
+- Wasser in der Kanalisation
+- Verkehrsflüsse
+- Kosten werden Kapazitäten, wieviel Wasser passt z.B. durch ein Rohr
+- Kapazität beschränkt
+- Fluss muss erhalten bleiben, kann nicht einfach verloren gehen
+- Fluss definiert als Kapazität die Einflisst - Kapazitäz die rausfließt
+- Quelle in Menge S und Senke in Komplementmenge
+- Wert des Flusses will man an jeden beliebigen Schnitt ablesen
+- Beweis über Induktion
+- Fluss ist immer so groß wie die Kapazität
+
+## Pfad 
+- kann Rückwärtskanten erhalten
+
+## Flussalgorithmen
+- beginnen bei beliebiger Flussfunktion f(e)
+- Fluss der über Kante nicht brauch toleranz (nicht max kapazität)
+- man muss zeigen dass der Fluss vergrößert wurde und das die Kapazität nicht überschritten wird
+- weil delta e kleinster Wert ist
+
+## Wie findet man Pfad
+- Tiefensuche funktioniert nicht
+- Restgraph erstellen
+- Rückwärtskanten immer wenn wert nicht 0 null (Wert muss man vermindern können)
+- Falsche Entscheidungen Beim Graphen führen zu nicht maximalen Graphen (Die muss korrigert werden, mithilfe von Rückwärtskanten), Tiefensuche über Rückwärtskanten
+
+## Max-Flow Min Cut
+### TODO
+
+## Netzwerkfluss nach Edmonds Karp
+- Schichtengraph = Restgraph wo Kanten gestrichen worden sind
+- Laufzeit: $O(E^2*V) <= O(V^5)$
+- nicht nutzbar praktisch
+
+## Dinic
+- Baue Schichtengraph auf
+- finde einen Blockiredenfluss und berechene neue Flussfunktion
+- baue danach wieder Restgraph
+- $O(E^2*V)$
+
+# Klausur
+- Was ist ein Fluss, Flussfunktion, Restgraph, Schichtengraph, Flusserhaltung, warum Rückwärtskanten
+
+## Push Relabel Algorithmus
+- Gegeben NEtzwerk mit Kapazitätsfunktion
+- Flusserhaltung wird vernachlässigt -> PRäfluss wird definiert
+- Ein Knoten hat überschuss, dann heißt der aktive(active)
+- Knoten werden höhen zu geordnet (Wasser kann nur von höher zu niedriger fließen)
+- Kante von u -> v Kante muss Kapazität über 0 sein
+- Relabel Funktion hebt einen Knoten an(macht höhe größer)
+- Es muss ein Weg existieren von Knoten mit Überschuss zu Quelle s
+- s muss in der Menge aller erreichbaren Knoten liegen
+- Für eine Kante muss muss gelten dass kein fluss drüber fliegt
+- Laufzeit, maximale höhe 2V-1 -> $V^2$ viele Relabel Operationen(maximal)
+- sättigende und nicht sättigende Push Operationen (beziieht sich auf Kante)
+- sättigend wenn Kante nach Push Operation die Maximale Kapazität erreicht hat
+- u muss jedes mal um mindest 2 größer sein als vorher
+- $V*E$ sättigende Push Operationen (maximal)
+- Potential funktionenen für die Abschätzung von nicht sättigenden Push Operationen
+- Präzisierung des Algorithmuses führt zu $O(V^3)$
+- Wird schneller, da kein Fluss aufrecht erhalten werden muss, sondern ein Präfluss verwendet wird
+  
+- Edmond-Karp: $O(V E^2) = O(V^5)$
+- Dinic; $O(V^2 E) = O(V^4)$
+- Push Relabel: $O(V^3)$
+
+# Matching Probleme
+## Matching
+- Größtes Matching hat V/2 Kanten
+
+### Maximum weight Matching
+- Summe der Kanten des Matchings
+
+### Matching ikn bipartiten Graphen
+- Baue aus bipartitem Graph ein Netzwerk und wende Flussalgorithmen darauf an
+- Aus zunehmenden Wegen werden Alternierende Wege
+- Abwechselnd freie und Gebundee Kanten
+- Weg muss mit freiem KNoten beginnen und Enden
+- Wenn sowas existiert, kann Matching vergrößert werden
+- Verwende Breitensuche um zunehmend alternierende Wege zu finden
+- Algorithmus von Hopcroft und Karp (verbesserter Algorithmus)
+
+### Kann man so ein Matching auf Algemeine Graphen anwenden?
+- Problem: Bei der Breitensuche kann Fehler passieren
+- Problem besuchte Knoten werden nur 1mal verwendet (Ist aber notwendig)
+- Parität: Knotenlänge gerade oder ungerade
+- Kreise mit ungeraden Längen sind Probleme (Blüten)
+- Schrumpfe Blüte auf 1 Knoten zusammen (am Ende wieder rückgängig machen)
+
+## Spezielle Graphklassen
+- Bei n clique mindestens 4 Farben zum Einfärben
+- Graphklassen die die Probleme effizient lösen
+
+### Grapheigenscahft
+- Menge von Graphen
+- Monoton (Jeder Teilgraph eines Baumes ist ein Baum)
+- hereditär (Jeder Induzierte Teilgraph ist ein Baum)
+
+### Baum
+- weder Monoton noch hereditär
+  
+### Wälder 
+- Menge von Bäumen
+- nicht zusammenhängender Kreisfreier Graph
+- Monoton und hereditär
+- Kanten entfernen erzeugt keine Kreise
+
+### Bipartit
+- Monoton und hereditär
+- Gleiche Begründung wie Wald
+
+### Co-Graphen 
+- name kommt von komplement Graphen (veraltet)
+- Disjunkte Summe, müssen Disjunkte Graphen sein
+- Das Erstellen von Co-Graphen lässt sich als Baum darstellen
+- 
+  
+  
+
+### Frage Ist ein Baum/Wald Monoton/Hereditär
+
+
+### Co-Graph 
+- darf kein P4 enthalten weil Komplement von P4 = P4 ist
+- Wenn man Co-Baum hat, ist independent set,Färbung,Clique, etc effizient in O(V+E) zu lösen
+- Erkennungsalgorithmen, liefern Anhaltspunkt für die Lösung
+
+## Planare Graphen
+Planare Graphen, kann man so in eine Ebene Zeichnen, dass sich keine Kanten außer in den Knoten kreuzen
+### Eulersche Polyeder Formel
+Anzahl der Knoten - Anzhal der Kanten + außerere Flächen (f for faces) = 2 
+einfache Graphen = Keine Parallelen Kanten
+Baum ist planar
+Wenn man Kanten aus Kreis entfernt, verschwinden Flächen
+E und F wird kleiner (deshalb gilt Beziehung)
+- Eine Kanten kann maximal 2 Flächen Begrenzen
+- Jede Fläche ist durch mindestens 3 Kanten begrenzt
+- PLanare Graphen sind dünne Graphen
+- Der vollständige Graph mit 5 Knoten ist kein planarer Graph
+- Jeder Knoten ist mit 4 anderen Knoten verbunden
+- Bei Bipartiten planaren Graphen gibt es keine Kreise der Länge 3 gibt, deshalb gibt es 4 Kanten die Flächen begrenzen
+
+### Ist jeder (induzierte Teilgraph) eines planaren Graphen planar?
+- Eigenschaft ist Monoton
+- wegnehmen von Kanten und Knoten nicht dazu, dass sich keine Kanten kreuzen
+- Blüten bei dem Matching
+- Unterteilungsgraphen -> Kante in Graph wird durch weg ersetzt (neue Knoten nehmen)
+
+### Ist der Peterson Graph planar
+- V=5 E=10 f=12
+- man kann Kanten kontrahieren, dass K5 oder K3,3 Dabei rauskommt
+
+- Jeder Planare Graph ist 6 und 5 Färbbar
+-3Färbung für planare Graphen ist NP-vollständig
+
+### Planare Graphen
+- nicht besonders spannend
+- nur wegen Fehler in Beweis berühmt
+Es gibt haufenweise Graphklassen die alle mehr oder weniger Relevant sind (Intervalgraphen)
+- Außen-planar
+- Knoten auf Kreis zeichnen, Kanten liegen innerhalb
+
+# Vorrangwarteschlangen
+Wie implementiert man die Algorithmen vernünftig?
+- Man hat Operationen wie Extract min und Decreasekey
+- Verbinde Liste mit Binärheap, sodass sich bessere Laufzeiten ergeben
+- Laufzeit ist nur O(Log n) O(n) ist falsch
 - 
