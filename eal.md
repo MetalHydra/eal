@@ -13,6 +13,7 @@
 - B-Bäume sind externe effiziente Datenstrukturen(werden in Datenbanken verwendet).
 
 ## Bewertung von Algorithmen
+- Unterschiedliche Hardware ist unterschiedlich schnell und der selbe Algorithmus kann auf verschiedenen Systemen unterschiedlich gut laufen -> bewertung in Komplexitätsklassen
 
 ### Kriterien
 - Korrektheit: 
@@ -32,7 +33,12 @@ $2n -> n^2 = 4n^2 = 4x \ sec$
 - Doppelte Anzahl an Elementen -> 4mal so lange Laufzeit
 
 ### Groß $O$
-- Menge an Funktionen
+- Einteilen in verschiedene Komplexitätsklasssen $O(1), O(n), O(2^n)$
+- heißt nicht automatisch worst case, kann auch average und best case sein
+- Es können Zeit und Platzkomplexität beschrieben werden(in abhängigkeit der Eingabelänge)
+- Menge an Funktionen die Asymptotisch höchstens so stark wachsen wie $g$
+- $O(g) = \{f|\exists c \in \mathbb{N} \exists n0 \in \mathbb{N} \forall n \geq n0 : 0 \leq f(n) \leq c g(n)\}$
+
 - $f = \mathbb{N_0} \rightarrow\mathbb{N_0}$ so definiert, man zählt Anzahl an schritten und gibt Anzahl an Elementen an
 - wichiig Konstante Faktoren werden ignoriert
 - Kann auch über Grenzwert angegeben werden
@@ -40,16 +46,147 @@ $2n -> n^2 = 4n^2 = 4x \ sec$
 - Es interessiert nur das Asymptotische Verhalten im unendlichen (das gleiche wie ab einer Stelle $n_0$)
 - Man sucht immer die kleinste Obere Schranke
 - Ebenso Untere Schranken $\Omega(g)$
-- $\Theta(g)$ Funktioniert nur durch Konstanten Faktoren
+- $\Omega(g) = \{f|\exists c \in \mathbb{N} \exists n0 \in \mathbb{N} \forall n \geq n0 : 0 \leq c g(n) \leq f(n) \}$
+- $\Omega$: wächst mindestens so stark
+- $\Theta(g)$ Funktioniert nur durch Konstanten Faktoren (wächst genauso stark wie)
+- $\Theta(g) = \{f| f \in O(g) \land f \in \Omega(g)  \}$
 - Keine Basen bei Logarithmen, da diese ineinander umrechenbar sind, die Umrechnung packt man dann in die Konstante $c$ rein.
-  
-- #TODO (Regel von L'Hospital anschauen)
+- Konstante Faktoren werden ignoriert
+- $log_b(n) = \frac{log_a(n)}{log_a(b)} = \frac{1}{log_a(b)*log_a(n)}$
+- $1/log_a(b)$ ist konstanter faktor
+### Beispiele:
+$37n^3+2n^2 \in O(n^3)$ 
+$37 n^3+2n^2 \in \Omega(n^3)$
 ### Aufwandsschätzungen von mehrstelligen Funktionen
+- Abhängigkeit von mehr als einer Variablen
 - Bsp. Textsuche nach wort
+- Muster der länge $m$ wird über text der Länge n geschoben und stellenweise auf Gleichheit geprüft $O((n-(m-1))*m)$
+- Tiefensuche ist abhängig von Knoten und Kanten
+- erweitern $g: \mathbb{N_0^2} \rightarrow \mathbb{N_0} $
 - $f:\mathbb{N_0}^2$, und $f(x,y), g(x,y)$
 - Notation für Tiefensiche wichtig (mehrere Knoten und Kanten)
+![](2022-12-12-13-25-10.png)
 
-# TODO Turingmachinen
+### Komplexitätsmaße
+- Worst, average und best-case
+- Best-Case quasi nie berüchsichtigt
+- Average-Case häufig nicht sehr leicht zu bestimmen, da Wahrscheinlichkeit der Eingaben wichtig ist (normal, binomial, Poissonverteilung)
+- Bei Worst-Case analyse kann man sich sicher sein, dass Algorithmus nach n Schritten fertig ist
+- Murphys Law, im Zweifelsfall geht immer alles schief was scheif gehen kann.
+- Bei Echtzeitsystemen, bei denen Reaktionszeiten garantiert werden müssen, sich average case ungeeignet (nur worst case)
+### Worst-Case Komplexität
+- Laufzeit im schlechtesten Fall
+- $W_n$: Menge der Zulässigen Eingaben der Länge n
+- $A(w)$: Anzahl Schritte von Algorithmus A für Eingabe w
+- $T_A(n)=sup\{ A(w) | w \in W_n \}$ ist eine Obere Schranke für die Maximale Anzahl an Schritten, die Algo A benötigt um Eingaben der größe n zu verarbeiten
+- supremum ungefähr maximale Anzahl an Schritten Aw um Eingabe zu Verarbeiten
+
+### Average-Case Komplexität
+- $W_n$: Menge der Zulässigen Eingaben der Länge n
+- $A(w)$: Anzahl Schritte von Algorithmus A für Eingabe w
+- $\bar{T}_A(n) = \frac{1}{|W_n|}   \Sigma_{w \in W_n} A_w $
+- Average Komplexität ist die Mittlere Anazahl an benötiogten Schritten
+- arithmetischer Mittelwert
+
+## Berechenbarkeit
+### Vorbemerkungen
+- Alphabet $A$: endliche, nicht leere Menge an Zeichen (Symbole oder Buchstaben)
+- Wörter: Endliche Folgen $(x_i,...,x_k) mit x_i \in A$: haben die Länge $k$
+- Die Menge aller Wörter über dem Alphabet $A$ wird mit $A^*$ bezeichnet
+- leere Wort: $\epsilon$
+- Die Menge $A^*$ ist abzählbar (man kann die Elemente nummerieren)
+- Beispiel: $A = \{ 0 1\}$
+- $\epsilon$, 0, 1, 00, 01, 10, 11, 000, etc hänge Zeichen an und Zähle so sukzessiv alle Wörter auf
+- ![](2022-12-12-14-07-04.png)
+
+### Rechnermodelle
+- Random Access Machine (RAM, Registermaschine)
+- verfügt über eine Raihe an Befehlen (read, write, add, sub, goto, if goto)
+- abzählbar unendlich viele Speicherzellen (R0,R1,R2,...)
+- Akkumulator (Register für Arithmetik)
+- Ein und Ausgabe Register
+- Kostenmaße: uniform (Anzahl der Ausgeführten Befehle)
+- logarithmisch (binäre länge der benutzten Operanden berücksichtigen)
+- RAM ist sehr ähnlich zu echtem Computer im Gegensatz zu einer Turingmaschine
+- ![](2022-12-12-14-19-17.png)
+- RAM entspricht auch intuitiv dem Berechenbarkeitsbegriff
+
+### Berechenbarkeitsbegriff
+- Ist es Grundsätzlich Berechenbar
+- Eine Funktion $f: \mathbb{N^k} \rightarrow \mathbb{N}$ ist berechenbar, wenn falls es ein RAM Programm p gibt (es reicht die Existenz), sodass gilt, p berechnet m zur Eingabe n1,...,nk genau dann wenn f(n1,...,nk) = m
+- Ein Programm berechnet eine Ausgabe zu einer gegebenen Eingabe
+### Turingmachinen (deterministisch)
+Turingmaschinen bestehen aus einem Unendlichen Band auf dem Zeichen gelesen und geschrieben werden können.
+Ein Schreib und Lesekopf bewegt sich dabei über das Band
+Dabei kann nur das zeichen geändert oder ignoriert werden, auf dem aktuell der Schreib-Lesekopf zeigt.
+Das Band ist dabei initial mit dem Blank Symbol initialisiert.
+![](2022-12-12-14-44-51.png)
+- Zustandsübergänge $\delta(z,a) = (z',b,x)$
+- Wenn sich eine Turingmaschine M in Zustand z befindet wird und das Zeichen a unter dem Kopf befindet, dann geht M in nächsten Schritt in den Zustand z' über, überschreibt a mit b, und führt eine Kopfbewegung $x \in \{ L,N,R\}$ aus.
+- Turingmaschinen können konfigurationen haben (Momentaufnahme der Turingmaschine)
+- $\alpha \beta \in \Gamma^*$ ist der bereits besuchte Teil des Bandes
+- Schreib Lesekopf steht auf dem ersten Zeichen von $\beta$
+- z ist der aktuelle Zustand der Maschine
+- Turing Maschienen können Sprachen akzeptieren oder Verwerfen
+- Die von einer Turing maschine akzeptierte Sprache ist folgenderweise definiert:
+- $T(M) = \{ x \in \Sigma^* | z_0 x \rightarrowtail \alpha z \beta, \alpha, \beta \in \Gamma^*; z \in E \}$
+- Nach Endlich vielen Schritten von einer Startkonfiguration $z_0x$ erreicht die Turingmaschine die konfiguration $\alpha z \beta$
+- Ist ein Wort nicht in einer Sprache darf die Turingmaschine in einer Endlosschleife gehen (oder es gibt einen verwerfenden Endzustand).
+- Rekursiv aufzählbare Turingmaschine  $L \subseteq \Sigma^*$ Wenn eine dtM die Sprache L akzeptiert
+- Falls M die Sprache L akzeptiert und für alle Eingaben $x \in \Sigma^*$ hält, so entscheidet M die Sprache L
+- $\Sigma ^*$ = alle Wörter des Eingabealphabetes
+- $L \subseteq \Sigma^* $ heißt entscheidbar oder rekurisv, wenn es eine dtm gibt, die L Entscheidet
+- Das Entscheiden von Sprachen ist equivalent zum Berechnen von Funktionen
+
+### Rekursiv Aufzählbare Sprachen
+- Es gibt eine TM die Anhält, wenn ein Wort w zur Sprache L gehört, sonst aber u.U nicht.
+
+#### Funktionen mit einer Turingmaschine Berechnen
+- Berechen $f: \Sigma^* \rightarrow \Sigma^*$
+- Es muss für ein $z_e \in E$ gelten:
+- $z_0 x \rightarrow z_e y \leftrightarrow f(x) = y$
+- Für ein Eingabewort schreibt eine Turing maschine ein Wort auf das Band und geht anschließend in ein Akzeptierenden Endzustand
+- Man benutzt immer dtms für Funktionen 
+- 
+### Rekursive (Entscheidbare) Sprachen
+- Entscheidbare Probleme
+- Gegenüber Komplement bildung abgeschlossen
+- Rekursive Sprachen: Eine Sprache $L$ ist Rekursiv(Entscheidbar) wenn eine Turingmaschine für jedes Wort aus $\Sigma *$hält und für jede Eingabe $w \in \Sigma^*$ dann akzeptiert, wenn das Wort w in der Sprache L ist.
+- Eine dTM M entscheidet die Sprache L
+- Man Konsturiert dann eine TM M', dass M' nicht akzepitert wenn M in einen Endzustand über geht. Wenn M akzepitert hält geht M' in einen Endzustand über
+- ![](2022-12-12-17-07-14.png)
+- ![](2022-12-12-17-07-48.png)
+- Sprachen sind Entscheidbar wenn die Sprache $L$ als auch das Komplement $\bar{L}$ rekursiv aufzählbar sind.
+- Verwende 2 Turing-Maschinen die M1 und M2 die $L$ und $\bar{L}$ akzeptieren.
+- M führt jeweils 1 Schritt von M1 und M2 aus, und hält falls eine der beiden hält.
+- M akzeptiert, wenn M1 akzepitert, sonst wird nicht akzeptiert.
+
+#### Kostenmaße bei Turingmaschinen
+Laufzeit: Anzahl der Zustandsübergänge
+Speicherplatz: Maximale Länge einer Konfiguration während der Berechnung
+
+#TODO
+### Zustände von Turing-Maschinen merken
+
+### Mehrband-Turingmaschinen
+- verwenden mehrere Bänder
+- weiterhin nur 1 Schreib/Lesekopf
+- $\Gamma^k $ statt $\Gamma$
+- Jede t(n)-zeit, s(n)-platzbeschränkte k-band Turingmaschine kann durch eine 1 Band dTM in O(t(n)*s(n)) auf platz O(s(n)) simuliert werden.
+
+#### k-Band dTM
+- k-Bänder mit je einem Kopf die sich unabhängig voneinander Bewegen können.
+- Eingabewort steht immer auf dem ersten Band, alle anderen Bänder sind mit Blanks belegt am Anfang
+- $\delta: Q \times \Gamma^k \rightarrow Q \times \Gamma^k \times \{R,N,L \}^k$
+- Übergänge stehen für jedes Band da bsp. $(aa/bb/lr)$ (2 Bänder = 2 gelesene Symbole zwei geschriebene Symbole 2 Richtungswechsel)
+- können in 1-Band dTMs umgewandelt werden
+- Übersichtlicher
+- mehrere Stellen des Eingabewortes gleichzeitig bearbeitbar
+
+#TODO Sternmarken fragen
+
+### dTMs und RAMs
+
 
 # Nicht Berechenbare Probleme
 Diagonalsprache ist nicht entscheidbar
