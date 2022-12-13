@@ -182,14 +182,96 @@ Speicherplatz: Maximale Länge einer Konfiguration während der Berechnung
 - können in 1-Band dTMs umgewandelt werden
 - Übersichtlicher
 - mehrere Stellen des Eingabewortes gleichzeitig bearbeitbar
+- k-Band Turingmaschinen können durch 1-Band Turing Machinen dargestellt werden
+#### Beweis
+- ![](2022-12-13-16-04-44.png)
+- Arbeitsalphabet wird erweitert, dass alle Kombinationen des 1 Bandes enthalten sind
+- alle konfigurationen 1 symbol inklusive Markierungen (Position der Leseköpfe)
+- 1 Band Turingmachine merkt sich die Zustände und findet die Zeichen der Mehrband Turingmachine raus, indem diese über das Band läuft und nach markierungen guckt
+- Anschließend weiß die Turing machine was geschrrieben werden muss und läuft über das Band zurück, bis und Modifiziert entsprechend die markierten Symbole
+- Im ersten schritt wird die Eingabe in die Tupel repräsentation überführt (a -> (a,_,_), etc) 
+Sternmarken = markierungen der Leseköpfe
+- ![](2022-12-13-16-15-34.png)
 
-#TODO Sternmarken fragen
+#### Unterprogramme von Turing maschinen
+- Unterprogramme werden von einem bestimmten Zustand aus aufgerufen 
+- Die benötigten Daten werden auf ein für das Unterprogramm reserviertes Band geschrieben auf dem dann gearbeitet wird
+- Nach Beendigung des UPs geht die Turing Maschine in ein Zustand des normalen Programmes über
 
 ### dTMs und RAMs
+- Mit polynomiellen Zeitverlust können dTMs und RAMs gegenseitig simuliert werden.
+- Man verwendet mehrere Turingmaschinen, die die jeweiligen Instruktionen des RAMs durchführen. 
+- Die Abarbeitung eines Programmes lässt sich dann durch hintereinanderausführung der TMs durchführen.
 
+### Nicht deterministische Turingmaschinen (ndTMs)
+- nDTMs verwenden anstatt Übergangsfunktionen übergangsrelationen
+- jede Konfiguration hat mehrere mögliche Nachfolgekonfigurationen
+- d.h. Für eine Eingabe sind mehrere Ausgaben möglich
+- Es kann mehrere Übergänge vom gleichen Symbol haben
+- Wörter werden akzeptiert, wenn es mindestens 1 Pfad gibt der das Wort akzeptiert
+- Wörter werden nicht akzeptiert, wenn es kein Pfad gibt
+- ![](2022-12-13-17-02-20.png)
+- Ziele werden durch "gutes raten" erreicht und dann verifiziert
+- Nicht deterministische Turing Maschinen können von dTMs erledigt werden.
+
+#### nDTM -> dTM
+- Gehe jeden Pfad durch und schaue ob nDTMs verwirft (Tiefensuche)
+- Problem: Pfade können in einer Endlosschleife 
+- mache stattdessen Breitensuche
+- Starte mit Berechnung der Länge 0, 1, 2, 3, etc.
+- Gebe k-Band dtm (3 Band dtm an)
+- auf dem ersten Band wird das erste Wort gespeichert (das erste Band wird nicht verändert)
+- Zähler auf dem 2. Band (Pfad wird als Nummer kodiert)
+- Berechnung fertig wenn auf dem 2. Band ein Blank gelesen wird.
+- Berechnung wird auf dem 3. Band durchgeführt
+- ![](2022-12-13-17-30-34.png)
+- Prüfe ob Berechnung akzeptierend ist, falls nicht Zähle im Register 1 hoch und mache nächste Berechnung
+- ![](2022-12-13-17-34-08.png)
+
+
+#### Nichtdeterminismus
+- theoretisches Konzept
+- meistens leicht und übersichtlich
 
 # Nicht Berechenbare Probleme
-Diagonalsprache ist nicht entscheidbar
+- Es gibt Funktionen $f: \{0,1 \}^* \rightarrow \{0,1 \}$ die nicht durch ein Programm beschrieben werden können
+- Solche Funktion kann man mithilfe der Diagonalisierung finden.
+
+### Cantors Diagonalisierungsverfahren
+- Konstruieren von neuen Objekten die nicht in einer Menge von vorhandenen Funktionen liegen
+- ![](2022-12-13-17-55-06.png)
+- Man guckt immer die Diagonale an
+- In den Anwendungen hat man immer (abzählbar)unendlich viele Merkmale und Objekte
+- Menge der Berechenbaren Funktionen -> man Konstruiert eine Funktion die nicht berechenbar ist
+- Man zählt alle Funktionen auf, mit allen Möglichen Eingaben
+- ![](2022-12-13-18-05-40.png)
+- Eine Funktion die für $\epsilon$ akzeptiert kann nicht in der aufzählung 
+
+### Universelle Turingmachine 
+- Bisher Turingmaschinen für bestimmte zwecke
+- Turingmaschinen
+- Eingabe ist Turingmaschine als Gödelnummer codiert und eine Eingabe
+- die Universelle Turingmaschine simuliert dann die Codierte Turingmaschine
+- ![](2022-12-13-18-34-09.png)
+- ![](2022-12-13-18-38-06.png)
+
+# Nicht Berechenbare Probleme
+
+### Die Diagonalsprache
+Die Diagonalsprache ist nicht Berechenbar
+![](2022-12-13-18-40-38.png)
+- Die Sprache die ihre eigene Eingabe als Gödelnummer nicht akzeptiert
+- Nicht rekursiv AAufzählbar
+- ![](2022-12-13-18-49-52.png)
+- Diagonalelment von ML = 1: -> ML akzeptiert seine eigene Eingabe und gehört somit nicht zur Sprache (weshlab die Sprache nicht akzeptiert werden sollte)
+- ML = 0 -> ML gehört zur Sprache wird aber nicht akzpetiert obwohl diese zur Sprache dazugehören sollte. 
+- In beiden Fällen ein Widerspruch
+
+### Das Halteproblem
+- kann man sagen ob ein Programm zu einer bestimmten Eingabe anhält
+- ![](2022-12-13-18-54-37.png)
+- h und H0 sind rekursiv aufzählbar, man konstruiert TM die H akzeptiert, immer wenn Sie hält.
+- ![](2022-12-13-19-02-57.png)
 
 # Reduktion
 Halteproblem Gegeben ist Programm als Gödelnummer mit einer Eingabe
@@ -204,8 +286,6 @@ Zeige; $!DIAG <= H$
 Baue Turingmachine die auf dem leeren Band hält
 
 
-## Universelle Turingmachine 
-Eingabe ist Programm als Gödelnummer
 
 # Was ist besser?
 - Viel Platz oder viel Zeit
