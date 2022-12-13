@@ -792,4 +792,63 @@ Wie implementiert man die Algorithmen vernünftig?
 - Man hat Operationen wie Extract min und Decreasekey
 - Verbinde Liste mit Binärheap, sodass sich bessere Laufzeiten ergeben
 - Laufzeit ist nur O(Log n) O(n) ist falsch
+
+
+# Amortisierte Laufzeitanalyse
+- Aggregat-Methode
+- Worst-Case Laufzeit
+- Verwende Potentialfunktionen
+
+## Account Methode
+- jede Push Operation kostet, wenn kein Element mehr reinpasst -> Array verdoppeln
+- Beim entfernen von Elementen halbiere Array
+- halbiere größe, wenn Array nur noch 1/4 gefüllt ist
+- Splay Bäume
+
+### Selbstanordnende Listen
+- häufig benutzte Elemente sollten am Anfang der Liste platziert werden
+
+### Wie bringt man Elemente weiter nach vorne?
+- Keine optimale Strategie, Zugriffshäufigkeiten sind im vorhinein nicht bekannt
+- Frequency Count, Transpose, Move to Front Regeln
+- Zugriffsfolgen haben Einfluss auf die Kosten
+- Man schaut sich an, welche Zugriffsfolgen in der Praxis auftreten
+- Move to Front Regel ganz gut
+- Algorithmus sucht Element, Algorithmus kann Element an den Anfang setzen oder nach hinten verschieben
+- Kosten: auf k-Elementen kosten für k-tes Element, Zum Anfang verschieben sind keine Kosten, 
+- Nach hinten verschieben kostet eine Einheit
+- Definiere Potential funktion $\Phi$: 2 Listen L1, L2 die gleich Lang sind
+- $\Phi$: Anzahl der Inversionen (Pärchen die in beiden Listen in unterschiedlicher Reihenfolge stehen)
+- Jeder beliebige Algorithmus A 
+- Move to Front Algorithmus, höchstens doppelt so schlecht, wie der beste Algorithmus
+
+# Amortisierte Laufzeit
+### Fibbonacci Heaps (Amortisierte Laufzeit)
+- Insert alles in Wurzelliste eintragen
+- Bäume bei extract min konstruieren
+- Wenn man weiß wieviele Elemente der hat, kennt man seine Tiefe
+- Fibbonacci heap mit k-vielen Kindern
+- sortiere Kinder nach Zeitlicher Reihenfolge -> Aussage über den Knotengrad
+- Es darf maximal 1 Knoten abgetrennt werden, danach wird Knoten markiert
+- Für k viele Kinder gilt Lemma 1
+- Bäume werden nicht zu dünn, haben Logarithmische höhe -> man weiß wievele Bäume man hat.
+- Potential-Funktion, Anzahl bäume in Wurzelliste, Anzahl der markierten Knoten (kann nicht negativ werden)
+- Minimum ist Zeiger auf Knoten mit minimalem Element
+- Bei Insert wird neuer Heap mit einem Element erzeugt und Union aufgerufen.
+- Extract-Min im Worst-Case O(n)
+- Anzahl Kinder durch logarithmus begrenzt
+- Kosten Anzahl der vorherigen Bäume + Kinder 
+- Ausrechnen von Kosten ist einfach wenn man Potentialfunktion (häufig verwendet man die Anzahl passend zum Problem)
+
+### Splay-Bäume (verkürzt)
+- Alles auf Splay Operation zurückgeführt
+- Rang eines Knoten ist Potential funktion (logarithmus )
+- Amortisierte Laufzeit setzt sich aus dem Rang zusammen
+- Kosten Abhängig von der letzten Position von x
 - 
+
+# log star (log *)
+- $log^*(n)$: Wie oft muss man log iterativ anwenden bis Zahl kleiner als 1 ist
+- Praktisch ist der durch 5 begerenz wegen der Größe
+
+# Algorithmen für Moderne Hardware
