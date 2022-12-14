@@ -98,7 +98,12 @@ $37 n^3+2n^2 \in \Omega(n^3)$
 - Beispiel: $A = \{ 0 1\}$
 - $\epsilon$, 0, 1, 00, 01, 10, 11, 000, etc hänge Zeichen an und Zähle so sukzessiv alle Wörter auf
 - ![](2022-12-12-14-07-04.png)
-
+- Eine Sprache und Ihr Komplement können eine von 3 Eigenschaften haben.
+- beide sind Rekurisv (und damit auch Rekursiv Aufzählbar)
+- beide sind nicht rekursiv aufzählbar
+- Eine von beiden ist rekursiv aufzählbar und die andere nicht
+- 
+- 
 ### Rechnermodelle
 - Random Access Machine (RAM, Registermaschine)
 - verfügt über eine Raihe an Befehlen (read, write, add, sub, goto, if goto)
@@ -254,6 +259,8 @@ Sternmarken = markierungen der Leseköpfe
 - die Universelle Turingmaschine simuliert dann die Codierte Turingmaschine
 - ![](2022-12-13-18-34-09.png)
 - ![](2022-12-13-18-38-06.png)
+- Die Universelle Turing maschine hält, wenn die Simulierte Turing Maschine auf der Eingabe hält, und verwirft, wenn die Simuliterte Turing-Maschine verwirft.
+
 
 # Nicht Berechenbare Probleme
 
@@ -279,7 +286,8 @@ Halteproblem als Sprache formuliert
 Halteproblem ohne Eingabe gleiche wie Halteproblem nur ohne Eingabe 
 Wir wissen das Diagonalsprache nicht entscheidbar ist -> andere Sprachen auf diese Sprache abbilden (bzw. auf das Komplement)
 Wenn Sprache nicht entscheidbar ist, ist Komplement auch nicht entscheibar
-
+Reduktion: totale berechenbare Funktion $f: \Sigma^* \rightarrow \Sigma^*$
+- Für jede Eingabe wird eine Ausgabe erzeugt
 - $L <= L'$ (mittels einer Funktion $f$)
 
 Zeige; $!DIAG <= H$
@@ -932,3 +940,107 @@ Wie implementiert man die Algorithmen vernünftig?
 - Praktisch ist der durch 5 begerenz wegen der Größe
 
 # Algorithmen für Moderne Hardware
+- Optimieren für Moderne Hardware
+- Prozessoren inziwschen schneller als Hauptspeicher
+- Geschwindigkeiten laufen immer weiter auseinander (Prozessor, Speicher)
+- immer größere Datenmengen die im Speicher liegen müssen
+- L1,L2,L3 Cache
+- Cache sind klein aber sehr schnell (sehr teuer)
+- Sequentielles Durchlaufen funktioniert gut wegen Prefetching
+- Daten die gebraucht werden müssen bestenfalls im Cache sein
+- Man legt ein einfacheres Speichermodell was gut in der Praxis einsetzbar ist ()
+- Man hat 2 Ebenen (CPU mit internem Speicher der größe n)
+- Externer SPeicher mit Blockgröße B
+- Man zählt an IO Operationen (1 Festplattenzugriff = B Elemente)
+
+### Binäre Suche
+- Beim SUchen lohnt es sich vorher zu sortieren
+- (rot = häufige Zugriffe)
+- rote Elemente in verschiedenen Blöcken = viele Cache Misses viele IO Zugriffe
+- Erfordert neue Art der Sortierung
+- r entspricht umsortiertem Array
+- modifizierte Suche stellt häufig genutzte Elemente an den Anfang
+- besser: Layout nach van Emde Boas
+- erstelle völlig Balancierten Suchbaum
+- Rekurisiv mittig aufteilen und Teilbäume in einem Bereich lassen
+- abhängig von Blockgröße
+- Teilbäume n knoten -> Wurzel n viele Elemente (wenige rekurisve Elemente)
+- Falls Teilbaum immer noch nicht in den Block passt -> weiter aufteilen
+- interne und externe verzweigungen
+- je weiter weg im Speicher desto mehr Cache Misses
+- 1 teurer zugriff erlaubt viele interene Verzweigungen
+
+### Transponieren einer Matrix
+- Matrix quadratisch (leichter zu Analysieren)
+- B viele Elemente mit einer IO Operation lesen
+- n/B viele IO Operationen um alle n Elemente zu lesen
+- Lese kleine Matrizen mit B*B Elementen
+- Mache das so, dass 2 Blöcke in den Cache passen
+
+### Matrix Multiplikation
+- ijk Verfahren: Reihenfolge der parameter
+- $O(n^3)$ IO Operationen
+- mache einfachen trick
+- vertausche Zeile k und j
+- Zeile ändert sich, Spalte bleibt gleich
+- mit register Anweisung nur 1 teure index operation und speichern in CPU register
+- Blockgröße sorgt für ca ein Faktor 2 besser
+- man kann nur konstante Faktoren gewinnen
+
+## Externe Datenstrukturen
+- Speichern von Daten die größer sind als alles was in den Hauptspeicher passt
+- große Datenmengen mit wenigen IO Zugriffen
+- Ersetzungsverfahren wie LRU für externe Datenstrukturen
+
+### Stack
+- Last in first out (LIFO)
+- kombinierter Input/Output Buffer
+- Zugriffe auf die festplatte simulieren
+- intern: 2 Blöcke der größe B
+- push operation schreibt in Hauptspeicher
+- unterer Teil wird auf Festplatte geschirben
+- Warum hat man 2 Blöcke?
+- Wenn man nur 1 Block macht man den Block fast voll
+- Bei jedem 2. Zugriff ein IO Zugriff
+
+### Liste 
+- 2 interne Blöcke am Anfang und am Ende der Datenstruktur
+- put, get/head 1/B IOs
+- solange Elemente in internal sind diese lesen, ansonsten von Festplatte oder intern lesen(wenn Festplatte leer ist)
+
+### Lineare Listen
+- aufeinanderfolgende Elemente sollten in einem Block liegen (n/B IOs) einfügen und löschen erfordert aber das man die Daten reorganisiert
+- Vermeiden, dass gewisse Bereiche in den Blöcken nicht genutzt werden
+- 2 aufeinander folgende Blöcke müssen zusammen 2/3B viele Elemente enthalten
+- jeder hat mind. 1/3 Elemente
+- 3n/B viele IOs
+- IO Operationen
+- Wenn Block voll ist, wird dieser in der Mitte aufgeteilt
+- Wenn man verlangt,dass nur jeder Block 1/3 Elemente hat und man löscht muss man den Verschmelzen
+- Wenn der Nachbar Block dann voll ist, muss man viel verschieben, zieht sich u.U. durch alle Blöcke
+- B-Bäume niedrige höhe
+
+### B-Bäume
+- O(logb(n)) IOs
+- Damit lassen sich sets und maps effektiv umsetzen
+- B-Bäume dann wenn man so viele Daten hat, dass man diese auf der Festplatte unterbringen muss
+- Unordered Map / Unordered Set
+
+### Hashing
+- Universum abspeichern
+- Schlüssel k wird an position A[k] abgespeichert
+- Speichern / Löschen / Suchen in O(1)
+- viel Platzverschwendung
+- man stellt weniger Speicher zur verfügung nur für die Werte die man wirklich abspeichern möchte
+- Es kann zu kollisionen führens
+- Synonyme: Die Elemente die kollisionen verursachen
+- möglichst wenige Adress kollisionen
+- Division Rest Methode h(k) = k mod m
+- Multiplikative Methode modulo + Rechtsshift
+- Hängt von der Schlüsselmenge k ab
+- schwer zu analysieren
+- Man Untersucht erfolgreiche und nicht erfolgreiche Suche
+- Zugriffszeiten abhängig von Belegungsfaktor
+- weniger Kollisionen -> bessere Zugriffszeiten
+- wie voll sind die Elemente wenn man j-tes Element einfügt
+- man verwendet keine verketteten Listen, sondern sucht nach ausweichpositionen
