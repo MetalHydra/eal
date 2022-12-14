@@ -268,7 +268,7 @@ Sternmarken = markierungen der Leseköpfe
 Die Diagonalsprache ist nicht Berechenbar
 ![](2022-12-13-18-40-38.png)
 - Die Sprache die ihre eigene Eingabe als Gödelnummer nicht akzeptiert
-- Nicht rekursiv AAufzählbar
+- Nicht rekursiv AAufzählbar (Wortproblem)
 - ![](2022-12-13-18-49-52.png)
 - Diagonalelment von ML = 1: -> ML akzeptiert seine eigene Eingabe und gehört somit nicht zur Sprache (weshlab die Sprache nicht akzeptiert werden sollte)
 - ML = 0 -> ML gehört zur Sprache wird aber nicht akzpetiert obwohl diese zur Sprache dazugehören sollte. 
@@ -279,6 +279,10 @@ Die Diagonalsprache ist nicht Berechenbar
 - ![](2022-12-13-18-54-37.png)
 - h und H0 sind rekursiv aufzählbar, man konstruiert TM die H akzeptiert, immer wenn Sie hält.
 - ![](2022-12-13-19-02-57.png)
+- Totalitätsproblem $H_0 \leq TOTAL$
+- Endlichkeitsproblem $\bar{H} \leq GENAU-K$
+- Äquivalenzproblem $H_0 \leq Äquiv$
+- ![](2022-12-14-14-52-48.png)
 
 # Reduktion
 Halteproblem Gegeben ist Programm als Gödelnummer mit einer Eingabe
@@ -286,16 +290,61 @@ Halteproblem als Sprache formuliert
 Halteproblem ohne Eingabe gleiche wie Halteproblem nur ohne Eingabe 
 Wir wissen das Diagonalsprache nicht entscheidbar ist -> andere Sprachen auf diese Sprache abbilden (bzw. auf das Komplement)
 Wenn Sprache nicht entscheidbar ist, ist Komplement auch nicht entscheibar
-Reduktion: totale berechenbare Funktion $f: \Sigma^* \rightarrow \Sigma^*$
+Reduktion: totale berechenbare Funktion $f: \Sigma^* \rightarrow \Sigma^*$ mit $x \in L \iff f(x) \in L' $
 - Für jede Eingabe wird eine Ausgabe erzeugt
 - $L <= L'$ (mittels einer Funktion $f$)
-
+- Falls eine Sprache L nicht entscheidbar ist, ist auch die Reduktion L' nicht entscheidbar
 Zeige; $!DIAG <= H$
 Baue Turingmachine die auf dem leeren Band hält
+- nehme neues Problem und finde Reduktion auf bekanntes Problem
 
+- Wortproblem wäre entscheidbar, dann wäre auch das spezielle Wortproblem entscheidbar (Wiederspruch)
+- $H_0 \leq H$: Halteproblem bei leerem Band auf Halteproblem reduzierbar
 
+# Postsches Korrespondenzproblem
+- Eingabe: endliche MEnge an Wortpaaren (wie dominosteine)
+- Kann man diese Steine so aneinanderlegen, dass das Wort oben, das gleiche Wort ist wie unten (nicht entscheidbar)
+- ![](2022-12-14-14-59-28.png)
+- ![](2022-12-14-15-00-04.png)
 
-# Was ist besser?
+# Komplexitätstheorie
+### Komplexitätsklassen
+- P vs NP: Problme für die eine polynomiell zeitbeschränkte dTM bzw. NDTM existiert
+- L vs NL: Problme für die eine logarithmisch platzbeschränkte dTM bzw. NDTM existiert
+- PSPACE NPSPACE: Problme für die eine polynomiell platzbeschränkte dTM bzw. NDTM existiert
+- $L \subset NL \subset P \subset NP \subset PSPACE \subset NPSPACE$
+
+### Die Klasse NP
+- Probleme in NP sind fast allesamt entscheidungsprobleme
+
+#### Clique
+- Finde zu einem Graphen G(V,E) und einem $k \in \mathbb{N}$ eine Teilmenge an Knoten $V' \subseteq V$, sodass 2 Knoten durch eine Kante e Verbunden sind und $|V'| \geq k$ gilt.
+- Algo:
+- Man rät nichtdeterministisch die Menge $V'$ und verifiziert diese dann, ob diese Menge eine Clique ist
+
+#### Hamilton Kreis
+- Eine Route durch einen Graphen G(V,E) der einmal durch jeden Knoten V läuft und am Startknoten endet.
+- Algo:
+- rate Menge an Kanten $E' \subseteq E$ und verifiziere ob diese eine Rundreise bilden.
+
+#### Independent Set
+- finde zu Graph G(V,E) eine Menge $V' \subseteq V$ mit $|V'| \geq k$, sodass für alle 
+- $u,v \in V'$ gilt: $\{u,v\} \notin E$: 
+- Eine Menge an Knoten zwischen denen keine Kante existiert
+-  Man rät nichtdeterministisch die Menge $V'$ mit $|V'| \geq k$ und verifiziert diese dann, ob diese Menge eine unabhängige Menge ist.
+
+#### dominating set
+- Finde in einem Graphen G(V,E) eine Menge $V' \subseteq V$ mit $|V'| \leq k$, sodass für alle $v \in V$ der Knoten v oder einer seiner Nachbarn in $V'$ liegt.
+- Man rät nichtdeterministisch die Menge $V'$ mit $|V'| \geq k$ und verifiziert diese dann, ob diese Menge eine dominierende Menge ist.
+
+### Nichtdeterminismus kann auf initiale Ratephase beschränkt werden
+
+Alle genannten Probleme können einfach aber nicht effizient gelöst werden.
+Man zählt $n \choose k$ Teilmengen V' mit |V'| <= k auf-> $O(n^k (n+m))$
+n ist Anzahl der Knoten und m ist Anzahl der Kanten
+Probleme werden als Sprache formuliertFür feste k = polynomielle Laufzeit, allerdings exponentiell wenn k nicht beschränkt ist
+
+### Was ist besser?
 - Viel Platz oder viel Zeit
 - Turingmaschine: N Zeitschritte Nutzen maximal N Felder
 - Zeit aus Platz bei Turingmaschine Ableitbar, wegen endlichen Zuständen und endlichem Bandalphabet
@@ -303,26 +352,15 @@ Baue Turingmachine die auf dem leeren Band hält
 - $t(n) > |Z|x|\gamma|^n$
 - Nehme 2. Band und Zähle Schritte. Wenn mehr Schritte als als mögliche Kombinationen -> endlosschleife
 
-## Cliquenproblem
-- Gegen Graph G(V,E) und einem $k \in \mathbb{N}$
-- In polynomieller Zeit
-
-## Hamiltonkreis 
-- auch einfach
-  
-## Independent-Set
-- Kein Knotenpaar ist durch eine Kante verbunden
-
-## Dominating set
-- Suche eine Möglichst kleine Knotenmenge
-
-Sehr einfache Probleme, aber sind nicht sehr effizient
-Für feste k = polynomielle Laufzeit, allerdings exponentiell wenn k nicht beschränkt ist
-
-Warum wird k mit übergeben?
+#### Warum wird k mit übergeben?
 - Weil sonst kein Zertifikat angegeben werden kann.
-- Probleme in NP sind fast allesamt entscheidungsprobleme
-- Probleme werden als Sprache formuliert
+
+### Verschiedene Arten von Problemen
+- Man unterscheidet bei vielen Problemen die Entscheidungs-, Optimierungs- und Suchvariante
+- Entscheidungsvariante: Gibt es bei einem gegebenen Graphen eine Clique der größe k?
+- Optimierungsvariante: Aus wievelen Knoten besteht eine Clique maximaler größe im gegebene Graph G(V,E)
+- Suchvariante: Finde eine Knotenmenge $V' \subseteq V$ des Graphen G(V,E), dass V' eine maximale Clique ist. 
+- Bei Optimierungs und Suchvariante : Es muss sichergestellt sein, dass keine größere Clique im Graphen existiert.
 
 - Reicht es eine Entscheidungsvariante zu lösen
 - DEC = Decision, MAX, SEARCH 
@@ -332,7 +370,13 @@ Warum wird k mit übergeben?
 - MAX -> SEARCH ist Problemspezifisch (bei der Clique einfach)
 - Sukzessiv Knoten rausnehmen, guck ob sich größe der Clique dadurch ändert (wenn nicht, dann Knoten unwichtig, sonst Knoten gehört zur Clique)
 
-# K-Färbung
+
+
+### K-Färbung
+- Abbildung $f:V \rightarrow \{1,2,...,k \}$
+- Eine k-Färbung ist ein Graph G(V;E), wenn $f(u) \neq f(v)$ für alle Kanten $$\{u,v\} \in E$ gilt.
+- rate wieder eine Zuordnung von Farben zu Knoten
+- prüfe dann für jede Kante die bedingung
 - Jeder miteinander Verbunde Knoten muss eine andere Farbe haben
 - MIN -> SEARCH ist Graph mit k-Farben Färbber, erzeuge weitere k-Clique
 - Weise dem Graph Farben mit k-Clique zu (jeder Knoten in Clique hat Farbe $f(x_i) = i$)
@@ -342,28 +386,47 @@ Warum wird k mit übergeben?
 
 Wir machen nur Entscheidungsprobleme, weil die einfach sind und man diese sowieso auf die anderen Problme Reduzierbar sind
 
+# TODO nochmal fragen wie die umrechung DEC->SEARCH etc ging
+
+
 HCP = Hamiltion-Circuit-Problem
 
-# Reduktion bei der Komplexitätstheorie
+### Reduktion bei der Komplexitätstheorie
 wie bei Berechenbarkeit
+- Es existiert eine Funktion f mit $x \in L \iff f(x) \in L'$ und f ist in Polynomieller Zeit berechenbar
 - Unterschied Funktion f muss nicht nur Berechenbar sein, sondern zusätzlich in Polynomieller Zeit Berechenbar
-- Reduktion ist Transitiv $L_1 \leq L_2 und L_2 \leq L_3 = L_1 \leq L_3$
+- Reduktion ist Transitiv $L_1 \leq_P L_2 und L_2 \leq_P L_3 = L_1 \leq_P L_3$
+- Man kann Clique, HCP, etc als Sprache formulieren, die von Turingmaschinen erkannt werden können.
+- ![](2022-12-14-17-01-18.png)
 
-## Die Klasse NP
+### Die Klasse NP
 $P \in NP$
 P ist in NP (man weiß aber nicht ob die gleich sind)
 Daneben sind schwere Probleme in NP definiert (Dies sind die NP-vollständigen Probleme)
-$L \in NP$
-- alle $L' \in NP$ sind Polynomiell reduzierbar auf $L$
 
+
+### NP-vollständig
+- Es existiert eine nTM die das Problem in polynomieller Zeit löst $L \in NP$
+- alle $L' \in NP$ sind Polynomiell reduzierbar auf $L$$
+- Alle Probleme in NP sind aufeinander reduzierbar
+- 
 # SAT (Satisfiability) Erfüllbarkeitsproblem
 - Erstes NP-vollständiges Problem
+- Erfüllbarkeit von Aussagenlogischen Formeln
+- Ist die Formel erfüllbar
 - Reduktionen von dieses Sat Problem
 - Man baut Schaltkreis
-- $SAT = {F | F ist eine erfüllbare aussagenlogische Formel}$
+- $SAT = {F | F  ist eine erfüllbare aussagenlogische Formel}$
 - Wenn alle Probleme nicht sc
 - Mit Zertifkiaten (dann steht da NP)
 - nicht deterministisch (mit nicht deterministischer Turingmaschine)
+
+### Satz von Cook/Levin
+- SAT ist NP-vollständig 
+- Man muss $L \leq_P SAT$ zeigen: Jedes Problem in NP ist auf SAT Reduzierbar
+- Es gibt eine nTM die L erkennt (in polyzeit)
+- M akzeptiert w -> dann gibt es eine erfüllende Belegung der Variablen der Formel
+- 
 
 Formel:
 - Reduktion muss in Polynomieller Zeit erzeugt werden.
@@ -456,14 +519,26 @@ Man fängt mit einem einfachen Algorithmus an
 Man nimmt irgendein Knoten und schaut sich den Worst Case an
 Anschließend weiter verbessern
 
+### Big-O Star
+- O* Notatio: vernachlässigt polynomielle Faktoren
+- $n^2 2^n \in O(2^n)$, $n^5+n^3 2^n \in O^*(2^n)$
 # Entwurfsmethoden 
 - Greedy Algorithmen
 - dynamische Programmierung
 - Greedy
 - local Search
 
-## Divide and Conquer
+### Divide and Conquer
 Problem wird in Teilprobleme aufgeteilt, welche dann rekursiv gelöst werden
+Am Ende werden die Teilprobleme wieder zusammengefügt,
+- Binäre Suche, Potenzieren einer Zahl, Matrix-Multiplikation, Quicksort
+
+### Potenzieren einer Zahl
+- Berechne $x^n $ für $n \in \mathbb{N}$
+- ![](2022-12-14-17-58-57.png)
+
+### Induktive Einsetzungsmethode
+- Man rät eine Lösung und bestätigt diese durch Induktion
 
 ## Laufzeit Rekursionsgleichungen
 Vorne stehen zweierpotenzen wegen *2
