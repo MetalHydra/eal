@@ -532,52 +532,95 @@ Anschließend weiter verbessern
 Problem wird in Teilprobleme aufgeteilt, welche dann rekursiv gelöst werden
 Am Ende werden die Teilprobleme wieder zusammengefügt,
 - Binäre Suche, Potenzieren einer Zahl, Matrix-Multiplikation, Quicksort
+- Bekannte Form für Laufzeiten ist: $aT(n/c)+b$ mit $T(1)=b$
+- Problem wird in a Teile der größe n/c aufgeteilt
 
 ### Potenzieren einer Zahl
 - Berechne $x^n $ für $n \in \mathbb{N}$
 - ![](2022-12-14-17-58-57.png)
 
+### Rekursionsgleichungen
+Beispiel: Fibbonacci
+- $T(n) = T(n-1)+T(n-2)$ mit T(0)= 0 und T(1) = 1
+- T sind Anzahl an Operationen
+- Anfangsbedingungen müssen immer mit angegeben werden
 ### Induktive Einsetzungsmethode
 - Man rät eine Lösung und bestätigt diese durch Induktion
+- Das birgt das Problem, das eine Falsche Lösung rauskommt, wenn man falsch rät
 
-## Laufzeit Rekursionsgleichungen
-Vorne stehen zweierpotenzen wegen *2
-Leite aus dem eingesetzen eine Formel ab
-Falls Wurzel oder log da steht -> Variablensubstitution
+### Iterative Methode
+- Man setzt solange die nächsten Terme in die rekursionsgleichung ein, bis sich eine geschlossene Formel daraus ableiten lässt
+- ![](2022-12-15-15-03-28.png)
 
-## Strassen Algorithmus
-Effiziente Matrix Multiplikation
-weniger Multiplikationen dafür mehr Additionen
+### Variablen Substitution
+- Variablen müssen so ersetzt werden, dass eine bekannte Form dabei raus kommt
+- Immer wenn Wurzel oder log vorkommt
+- ![](2022-12-15-15-08-48.png)
+- Löse das dann mit Induktiver Einsetzungsmethode oder der Iterativen Methode
+### Vorgehensweise
+- ermittle Laufzeit einzelner Operationen in der Standardform
+- Leite aus dem eingesetzen eine Formel ab
+- Falls Wurzel oder log da steht -> Variablensubstitution
+- nutze das Mastertheorem
 
-Charakteristische Operationen:
-- Addition und Multiplikation
+### Master Thereom
+- Das Master Theorem bietet Abschätzungen für Lösungen der Rekursionsgleichung
+- Laufzeit von Rekursiven Algorithmen oft nicht leicht abzuschätzen
+- $T(n) = a (T(n/b) + \Theta(n^k))$ und $T(1) \in O(1)$
+-  a = Anzahl rekursive Aufrufe der größe n/b
+- $\Theta $ ist der Zusatzaufwand Laufzeit ohne die Rekursiven aufzeit
+- Man unterscheidet 3 Fälle 
+- $a < b^k$ gilt: $T(n) \in \Theta(n^k)$
+- $a = b^k$: $T(n) \in \Theta(n^k log(n))$
+- $a > b^k$: $T(n) \in \Theta(n^{log_b(a)} )$
+  
+### Matrix Multiplikation (Beispiel)
+- $n \times n $ in jeweils 4 $n/2 \times n/2$ Matrizen aufteilen
+- ![](2022-12-15-17-33-15.png)
+- Untere Schranke der Matrixmultiplikation: $O(n^2)$
 
-## Untere Schranke der Matrixmultiplikation: $O(n^2)$
 
-## Algorithmus von Karazuba (Matrixmultiplikation)
+### Strassen Algorithmus
+- Effiziente Matrix Multiplikation
+- weniger Multiplikationen dafür mehr Additionen
+- ![](2022-12-15-17-37-03.png)
+
+### Charakteristische Größen(Operationen):
+- Addition und Multiplikation (bei der Matrixmultiplikation)
+- größe der Zahlen muss mit berücksichtigt werden
+- ![](2022-12-15-17-38-49.png)
+
+### Karazuba Algorithmus
+- schnelle Addition von großen Zahlen 
+- bildet 3 paare statt 4
+- Tradiotionelle Multiplikaiton = $N^2$ Schritte
+- verwendet 3 Multiplikationen
+- beide Zahlen werden zuerst addiert und dann ausmultipliziert multipliziert
+- Danach werden die erste und die letze zahl multipliziert und die mittleren Subtrahiert
+- bsp: 20 x 31
+- ![](2022-12-15-17-54-40.png)
+- $N^{1.59}$
+### Algorithmus von Karazuba (Matrixmultiplikation)
 - Zerlege Ziffern in Obere und Untere Bereiche
 
-## Master Thereom
-- $T(n) = a (T(n/b) + \Theta(n^k))$ a = Anzahl rekursive Aufrufe
-
 # Dynamische Programmierung
-Berechnung von Fibbonacci Zahlen
-Lösungen werden zwischengespeichert werden
-Das Speichern nennt man Memorieren (Top-Down-Ansatz)
-Immer noch Rekursiv aber mit zusätzlichem Array zum Speichern von zwischenergebnissen
-
-Folie 244: gestrichelte Linien sind Arrayzugriffe
-
 Bottom-Up: Iterativer Ansatz, verwende for schleifen und Arrays zum Speichern
 -> Bessere Laufzeit
 Dynamische Programmierung, verwendet man bei Optimierungsproblemen
-
 Beispiel ist die Matrix-Ketten Multiplikation
 Finde beste Reihenfolge an Matrixmultiplikationen, dass Operationen minimal werden
 Wieviele Klammerungen gibt es
 Probiere alle Kombinationen durch
 
-Rekursionsende i = j
+### Fibbonacci Zahlen
+- Berechnung von Fibbonacci Zahlen rekursiv (zuviele Berechnungen)
+- Es werden nur 2 Zahlen benötigt
+- Bereits berechnete Lösungen zwischengespeichern 
+Das Speichern nennt man Memorieren (Top-Down-Ansatz)
+Immer noch Rekursiv aber mit zusätzlichem Array zum Speichern von zwischenergebnissen
+
+### Matrix-Ketten Multiplikation
+- Optimale Klammerungen finden
 
 ## 0-1 Rucksackproblem (Dynamische Programmierung)
 Jedes Objekt hat eine Größe, Wert, Gewicht
