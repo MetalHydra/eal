@@ -606,6 +606,8 @@ Beispiel: Fibbonacci
 # Dynamische Programmierung
 Bottom-Up: Iterativer Ansatz, verwende for schleifen und Arrays zum Speichern
 -> Bessere Laufzeit
+- Lösen von Optimierungsproblemen
+- Problem wird in Teilprogramme aufgeteilt die man direkt löst oder weiter aufteilt
 Dynamische Programmierung, verwendet man bei Optimierungsproblemen
 Beispiel ist die Matrix-Ketten Multiplikation
 Finde beste Reihenfolge an Matrixmultiplikationen, dass Operationen minimal werden
@@ -618,57 +620,112 @@ Probiere alle Kombinationen durch
 - Bereits berechnete Lösungen zwischengespeichern 
 Das Speichern nennt man Memorieren (Top-Down-Ansatz)
 Immer noch Rekursiv aber mit zusätzlichem Array zum Speichern von zwischenergebnissen
-
+- Top-Down nach Bottn up machen: verwende iteration aus rekursion
+- ![](2022-12-18-09-56-26.png)
+- ![](2022-12-18-09-57-04.png)
 ### Matrix-Ketten Multiplikation
-- Optimale Klammerungen finden
-
+- Es sind n Matrizen $M1, ... , M_n$ gegeben und $M_i$ ist eine p_{i-1} x p_i Matrix
+- Finde eine Klammerung, dass $M1 \cdot ... \cdot M_n$, dass eine Minimale ANzahl an Skalaren Opewrationen benötigt wird
+- Naiv kann man alle Klammerungen ausprobieren
+- Nach Schulmethode $p_i$ Multiplikaitonen unbd p_{i-1} Additionen
+- Aufteilen auf ($M_1...M_i$)(M_{i+1}...M_n)$ sind n-1 Möglcihkeiten zu Klammern
+- Anschließend Rekursionsgleichung lösen: $a_n = \Sigma_{i=1}^{n-1}a_i \cdot a_{n-1}$ für $n \geq 2, a_1=1$
+- Lösen der Rekursiongleichung mithilfe von Erzeugenden Funktionen resultiert in den Catalan-Zahlen: $C(n) = {2n \choose n} \frac{1}{n+1} $ (Anzahl an Klammerungen)
+- finde Klammerungen rekursiv:
+- $(M_i...M_k)(M_{k+1}...M_j)$ ist optimale Klammerung des Abschnitts M_i...M_j
+- ![](2022-12-18-10-30-44.png)
+- 
+### Optimalitätsprinzip
+- Eine Optimale Lösung besteht aus optimalen Teillösungen
 ## 0-1 Rucksackproblem (Dynamische Programmierung)
-Jedes Objekt hat eine Größe, Wert, Gewicht
+Jedes Objekt hat eine Größe, Wert, Gewicht.
+Maximiere Wert an Objekten die in den Rucksack passen, ohne dass das Gesamtgewicht überschritten wird
 Maximiere den Wert, ohne ein Gewicht zu überschreiten
 Das 0/1 Rucksackproblem ist Schwach NP-Vollständig
 Der dynamische Algorithmus ist ein pseudo polynomieller Algorithmus
 G ist ein numerischer Wert der binär kodiert wird
 Eingabelänge ist $log_2(G)$
 $O(n G) = O(n 2^{log_2(G)}) = O(n2^{|G|})$
+- Rekursiver Algorithmus: 
+- Besser verständlich mit Aufrufbaum
+- ![](2022-12-18-10-40-56.png)
+- Rekrusiver Algorithmus hat $O(2^n)$
+- versuche stattdessen Bottom up Strategie: $O(n \cdot G)$ Pseudo-polynomiell
+- Merke Kapazität, Wert und Anzahl Items
+- ![](2022-12-18-11-06-02.png)
+### Pseudopolynomiell
+- Laufzeit ist Wert, wenn Laufzeit ein Polynom im numerischen Wert der Eingabe ist
 
-
-## Schwach-Np-vollständig
+### Schwach-Np-vollständig
 treten nur bei Numerischen auf
 Effiziente Alogorithmen nur wenn Numerische Werte nicht zu groß werden
 
-## Polygon Triangulierung
-Trinagliere so, dass Umfang der Dreiecke möglichst klein sind
+### Polygon Triangulierung
+- Trinagliere ein Polygon so, dass Umfang der Dreiecke möglichst klein sind
+- Gegeben ist Konvexes Polygon aus Punkten $(p_1,...,p_n)$
+- Gesucht ist eine Teilmenge der Menge B aller Saiten mit den Eigenschaften, dass sich keine 2 Saiten aus B kreuzen und die Saiten das Polygon in 3 Ecke Tei´len
+- kosten sind Umfang der Dreiecke
+- Es gibt wie bei der Matrix Ketten Multiplikation Möglichkeiten in der Anzahl der Catalan Zahlen
+- Man Testet alle möglichen Dreiecke
+- Rekursiver Algorithmus wie Matrix-Ketten Multiplikation
+- ![](2022-12-18-12-26-18.png)
+- dynamische Programmierung equivalent zur Matrix-Ketten Multiplikation
 
-## Levenshtein Distanz
+
+### Levenshtein Distanz
 WIeviele Schritte sind Nötig, um ein Wort in ein anderes Wort zu überführen
 
-## CYK Algorithmus
-Prüft ob ein Wort zu einer Sprache gehört
+### CYK Algorithmus
+- Prüft ob ein Wort zu einer Sprache gehört
+- Bekommt Kontextfreie Grammatik in Chomsky Normalform und Eingabewort 
+- Chomsky normalform
+- S -> AB (entweder 2 Terminale)
+- S -> a (oder ein nicht terminal)
+- Typischer Divide and Conquer Algo
+- kann dynamisch gemacht werden
+- Man zerlegt ein Wort in Teilwörter die seperat angeschaut werden 
+- $A \rightarrow BC$
+- $A \rightarrow a$
+- Bei Wöretern mit einer länge größer 2 muss immer die erste Regel angewendet werden (wegen Kontextfreie Grammatik)
+- In jeder Ebene des Baums wird das wort 1 länger was betrachtet wird
+- ![](2022-12-18-12-41-06.png)
 
-## Dynamische Programmierung Traveling Salesman
+### Dynamische Programmierung Traveling Salesman
 Das Optimalitätsprinzip gilt nicht -> Dann keine reukrsionsgleichung
 Es gibt Trick. ersten Knoten rausnehmen -> Dadurch keine Kreise sondern kürzesete Wege 
 In jedem Schritt wird ein Schritt rausgenommen,mächtigkeit $2^n$
 größe Tablle $n 2^n$
 
-## Greedy Algorithmen
-Optimal Merge Patterns
-2 Datein Mergen Laufzeit = $O(q1+q2)$ q1,q2 Länge von Array 1,2
-Man will Reihenfolge ermitteln für optimalen Merge
-Merge nach größen
-Ähnlich zu Matrix-Ketten-Multiplikation
-
+### Greedy Algorithmen
+- verwenden für exakte oder Approximative Lösungen von Optimierungsproblemen
+- die nächsten verwendeten Werte werden lokal optimal gewählt
+- sehr effizient, Jedes Element wird einmal betrachtet und dann sofort entschieden ob diese Element teil der Lösung ist
+- Es muss immer die Korrekthiet für die gewählte Lösung gezeigt werden
+- 
+### Optimal Merge Patterns
+- Zusammenfügen von 2 oder mehr Elementen
+ 2 Datein Mergen Laufzeit = $O(q1+q2)$ q1,q2 Länge von Array 1,2
+- Man will Reihenfolge ermitteln für optimalen Merge
+- Merge nach größen
+- Ähnlich zu Matrix-Ketten-Multiplikation
+- Kann mit Greedy methoden gelöst werden
+- Naiv: nehme die ersten 2 Listen Merge diese und Merge diese dann mit der nächsten Liste weiter
+- Fange mit den kleinsten Listen an und nehme dann die nächst kleinere
+- Man muss mit Induktion zeigen, dass die gewählte Lösung korrekt ist
+- Pfadkosten: $\Sigma_{i=1}^n d_i \cdot q_i$ qi ist die Länge der Datei
 ### Warum interessiert die Korrektheit bei Greedy und nicht bei dynmaischer Programmierung?
 Weil bei Dynamischer Programmierung alle möglicheiten Durchprobiert worden sind.
 Bei Greedy-Algorithmus wird nur eine Möglichkeit überprüft -> deshalb muss Korrektheit mit vollständiger Indution gezeigt werden.
 
-Greedy Algorithmen sind sehr einfach
-
-## Fractional Knapsack
-Objekte können auch halb reinkommen
+### Fractional Knapsack
+Objekte können auch halb reinkommen anders als bei 0/1 Knapsack
 Alpha ist Faktor wie sich Wert für 1 ändert
+- Man benutzt den Maximalen Profit pro Einheit
+- ![](2022-12-18-14-39-11.png)
+- Auch hier muss gezeitg werden, dass Lösung korrekt ist
+- 
 
-## Coin Changing Problem
+### Coin Changing Problem
 Geld wechseln
 möglichst wenig Münzen benutzen
 wie oft passt die größte Münze in das Wechselgeld
@@ -678,32 +735,50 @@ es gibt eine optimale Suchstruktur -> dynamische Programmierung
 Alle möglichkeiten durchprobieren
 Das Problem ist Schwach-NP-vollständig 
 
-## Präfix-Code
-Kein Codewort ist Anfangswort von einem anderen
+### Präfix-Code (Huffman)
+- Kein Codewort ist Anfangswort von einem anderen Codewortes
+- ungültiger Preäfix code: {0,01, 10} weil 0 Anfangswort von 01 ist
+- Gegeben ist Alphabet $\Sigma = \{a_1,...,a_n \}$
+- Wahrscheinlichkeit $p_i$ für Zeichen $a_i$ (häufig relative häufigkeit)
+- Gesucht Optimaler Präfixcode
+- Minimiere mittlere Codewortlänge $\Sigma_{i=1}^np_i \cdot |c(a_i)|$
 Greedy nach Wahrscheinlichkeiten
-
+- Im Wesentlichen Binärbaum, bei denen die Zeichen des Eingabealphabets an den Blättern stehen. Weg von der Wurzel zu einem Blatt ergibt deren Code wort
+- ![](2022-12-18-15-16-14.png)
+- Verwende Greedy Algorithmus
+- ![](2022-12-18-15-25-11.png)
+- Verknüpfe immer die Zeichen mit der Geringesten Wahrscheinlichkeit zusammen an eine gemeinsame Wurzel
+- Beweis in Uwe SChöning Buch
 Zu jedem Greedy Algorithmus muss gezeigt werden, dass die Wahl korrekt ist, dass muss man bei der dynamischen Programmierung nicht.
 
 # Lokale Suche
-Man beginnt bei einer beliebigen Lösung und modifiziert diese
-Wenn neue Lösung besser ist, übernehme die neue Lösung
-
-## Beim Travelling salesman
-Wähle zwei zufällige Knoten die nicht aufeinanderfolgend sind
-lokal nur, wenn Matrix symmetrisch ist, Weil zurückgehen nicht teuer wird
-
-## Permutationen
-jeweils immer 2 Zahlen tauschen, und Ret des Arrays Rekursiv genauso machen
-
-## Graph Partitionierung
+-Man beginnt bei einer beliebigen Lösung und modifiziert diese
+-Wenn neue Lösung besser ist, übernehme die neue Lösung
+- Auch Hill Climbing oder lokale Verbesserungsstrategie genannt
+- u.U. wird nur ein lokales Maximum gefunden
+- Wiederhole dann mit unterschiedlichen Startlösungen
+- loakle Änderungen Zufällig wählen
+### Beim Travelling salesman
+- Wähle zwei zufällige Knoten die nicht aufeinanderfolgend sind
+- und Verändere die Pfade, Wenn neue Lösung kürzer ist, mache mit dieser weiter
+- lokal nur, wenn Matrix symmetrisch ist, Weil zurückgehen nicht teuer wird
+- ![](2022-12-18-15-34-45.png)
+### Permutationen
+- jeweils immer 2 Zahlen tauschen, und Ret des Arrays Rekursiv genauso machen
+- Verwende einen Rekursiven Algorithmus
+- effizienter Algorithmus Quickperm
+- 
+### Graph Partitionierung
 Unterteile Graoh so, dass Kanten zwischen den Mengen minimale Kantengewichte haben
 
 # Sortieren
-## Quicksort
+### Quicksort
 - Divide and conquer
 - nehme Pivot-Element und sortiere linken und rechten Teil rekursiv
 - Welche Laufzeit hat Quicksort, wenn die Aufteilung immer in einem festen Verhältnis erfolgt?
 - Benutze Rekursionsbäume für die Herleitung
+- ![](2022-12-18-15-50-23.png)
+- ![](2022-12-18-15-50-41.png)
 - Setze rekursiv ein Daraus ergibt sich das Pascalsche Dreieck mit den Binomialkoeffizienten
 - Auf einer Ebene
 - $T(1) = k => k \in O(1)$ tritt auf,wenn $(\frac{9}{10})^k n = 1$ ist
