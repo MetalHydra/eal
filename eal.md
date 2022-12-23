@@ -1226,7 +1226,7 @@ Wie implementiert man die Algorithmen vernünftig?
 - viel Platzverschwendung
 - man stellt weniger Speicher zur verfügung nur für die Werte die man wirklich abspeichern möchte
 - Es kann zu kollisionen führens
-- Synonyme: Die Elemente die kollisionen verursachen
+- Synonyme: Die Elemente die kollisionen verursachen(zeigen auf gleiches Element)
 - möglichst wenige Adress kollisionen
 - Division Rest Methode h(k) = k mod m
 - Multiplikative Methode modulo + Rechtsshift
@@ -1237,3 +1237,142 @@ Wie implementiert man die Algorithmen vernünftig?
 - weniger Kollisionen -> bessere Zugriffszeiten
 - wie voll sind die Elemente wenn man j-tes Element einfügt
 - man verwendet keine verketteten Listen, sondern sucht nach ausweichpositionen
+- set, map (stl aus c++) sind als rot schwarz Baum implementiert
+- insert, findm erase (O(log(n))) (worst und average-case)
+- unordered-set, unordered-map verwendet hashing
+- Hash funktion zum finden wo eingefügt werden soll
+- Kosten sind von Belegungsfaktor abhängig, manchmal muss man rehash machen
+- Dann braucht man neue Hashfunktion -> Werte innerhalb müssen dann neu einsortiert werden
+- Operationen im Average Case O(1)
+- Belegungsfaktor $\alpha = N/M$
+- Synonyme werden in verketteter Liste gespeichert
+- Wenn man ein Element rausnehmen will, muss dass weiter drinstehen und man muss dieses mur als gelöscht markierne (sonst wäre es weg)
+- linares Hashing (i-ter versuch wird in hashfunktion eingefügt)
+- Bei Synonymen kriegt man immer die gleichen Ausweichpositionen -> double hashing
+- Beim uniformen Sondieren, Häufungen werden vermieden(Aber schwer zu implementieren)
+
+### Uniformes Sondieren
+- Beim i-ten sondiereungsversuch, ist Platz belegt
+- man verwendet man den Multiplikationssatz der Wahrscheinlichkeitsrechnung
+- Beim j-ten Versuch (j-1 Positionen vorher)
+
+### double hashing
+- verwendet 2 Hashfunktionen
+- erste zum Platzieren und die 2. zum sondieren
+
+### Was macht man, wenn man Hastabelle nicht im Hauptspeicher halten kann
+- Überläufer verketten, man kann mehr Elemente reinpacken, das die Liste groß sind
+- Verkettete Listen, kommen in Block
+- B* Bäume auch gut geeignet (geringfügig schlechtere Performence)
+
+# Algorithmen für geometrische Probleme
+- geometrische Probleme Teile Probleme in geometrische Zentren auf
+- Das Problem ist geometrisch definiert
+- finde nächsten Briefkasten
+- Fläche in Regionen unterteilt
+- Man schaut sich Punktpaare an und zieht eine Mittelsenkrechte ein
+
+### geometrische Probleme
+- Ein Punkt ist ein d-Tupel im Raum $\mathbb{R}^d$
+- Linien und Linien Segmente
+- polygone dürfen sich immer nur in den Endpunkten schneiden
+- Abstand zwischen Punkten ist der euklidsche Abstand
+- Dichteste Nachbarn: sortieren und Nachbarn betrachten
+- Wie sortiert man Punkte im 2D Raum?
+
+### Scanline Verfahren
+- Man sortiert die Werte
+- Man fährt mit Linie über Geometrische Szene
+- 2D Problem wird zum 1Dimensionalen Problem
+- Man hat eine Struktur L, in dem man sich die für das Problem benötigten Daten merkt
+- Tote Objektem aktive Objekte und inaktive Objekte
+
+### Sichtbarkeitsproblem
+- Gegenseitig sichtbar A und C am Anfang Scanline zwischen den Beiden schneidet keine weitere Linei
+- Punkte sind Disjunkt
+- Wo muss man das Liniensegment anlegen?
+- Mindestens quadratische Laufzeit (villeicht noch höher)
+- Prüfe im Algo ob p linker oder Rechter Anfangspunkt ist
+- Welche Datenstruktur braucht man für L? Operationen(einfügen, Löschen, Nachbarn berechnen)
+- Verwendet Balancierten Suchbaum
+- Scanline Algo Laufzeit: $O(2n \cdot log(n))$
+- Was ist wenn Anfangs und Endpunkte auf gleicher x-koordinate liegen?
+- Mehrere Abfragen, Reihenfolge ist wichtig
+- 
+
+### Schnitt iso orientierter Liniensegmente
+- Bei Bereichsabfragen, Blattsuchbäume, wo Blätter als Lineare Liste verkettet sind
+- Wenn r viele Elemnte in einem Bereich liegen aufwand r zum Suchen + log aufwand zum runtergehen im Baum
+
+### Liniensegment-Schnittproblem
+- gegeben: n Liniensegmente
+- gesucht: Alles sich schneidenden Segmente
+- Es wird immer ein (Pfeil nach oben (A ist oberhalb von x))
+- Annahme: Anfangs und Endpunkte liegen nicht auf einer Linie
+- Struktur Q: enthält Anfangs und Endpunkte (hier Balancierter Suchbaum)
+- Füge Schnittpunkte hinzu
+- Laufzeit abschätzung ist anders:
+- Schnittpunkt nur einmal einfügen (vorher überprüfen)
+- In Q wird jeder Schnittpunkt eingefügt
+- Platz: $O(n+k)$ -> Laufzeit $O((n+k)\cdot log(n))$
+- solange k nicht groß ist Funktioniert Scanline akzeptabel k Anzahl 
+- Warum muss da nicht n+k stehen in groß O, weil man eigentlich logn^2 = 2log(n) und das 2 Fällt in O weg
+- Man kann Platz sparen, indem man nicht alle Schnittpunkte speichert
+- Man dreht das Koordinatensystem um Winkel $\alpha$ 
+
+# Dichteste Punktepaare in der Ebene
+- L und r gegebe
+- Punkt r gegeben 
+- Berechne die distnaz von r zu jedem anderen Punkt und nehme das minimum
+- Man hat bisher einen Minimalen Abstand
+- Mache Bereichsanfrage in Datenstruktur mit y +- min
+- Folie 208 Fehler: Muss Blattsuchbaum statt Balancierter Suchbaum sein
+- In der Datenstruktur L werden die Punkte gepeichert 
+- Zum Zeitpunkt i gibt es nur ki Elemente
+- In jeden kleinen Rechteck kann nur ein Punkt liegen, weil sonst die Distanz M noch kleiner wäre
+
+# Konvexe Hülle
+- 2 Punkte aus dem Konvexen Raum und es eine Strecke dazwischen gibt, müssen alle Punkte 
+- Mathematiker definieren das über Schnittmengen
+- Konvexe Hüllen berechnen um bestimmte Berechnungen zu Beschleunigen
+  
+  ### Graham Scan
+- Man schaut sich 3 Punkte an und man schaut ob diese eine Links oder Rechtsdrehung bilden
+- Links oder Rechtsdrehung: steigungen betrachten oder determinate auf > 0 prüfen
+- Punkte auf gerade werden als Linksdrehung betrachtet
+- Spezialfälle lassen sich leicht erkennen
+- 1. Sortiere Punkte (Punkte mit kleinster y koordinate, den ersten falls mehrere)
+- 2. Sortiere diese Punkte anhand der Winkel (O(nlog(n)))
+- 3. Betrachte 3 Punkte wenn Linksdrehung -> alles ok gehe Punkt weiter
+- 4. Falls Rechtsdrehung (entferne mittleren Punkt und gehe ein Punkt zurück)
+- Wielange dauert zurück?
+- Man kann maximal Schritte zurückgehen wie man Punkte hat (2n) 
+- -> O(n log(n))
+- Die Implementierung verwendet eine doppelt verkettete Liste
+
+### Package Wrapping
+- Jarvis March
+- Man kann auf Winkelberechnung verzichten
+- Denke imaginäre Linie vom Punkt
+- Suche Punkt der Bezüglich der Referenzlinie den größten x-Wert aufzeichnet
+- Gar nicht mal so gute Laufzeit Alle anderen Knoten müssen betrachtet werden $O(|Ch| \cdot n)$
+- gut auf 3 Dimensionen Anwendbar
+- Beschleuningung: Man überlegt sich am Anfang welche Punkte nicht zur Komplexen Hülle gehören
+- 4 Punkte Berechnen und 4eck Aufzeichen Punkte innerhalb dieses 4 ecks gehören nicht dazu
+- Punkte finden
+- Linien im 45 grad Winkel von jeder Ecke verschieben, bis Linie Punkt trifft
+- Einmal sequentiell durch alle Punkte laufen und Summenbedingung prüfen
+- Wie findet man Punkte im Quadrat (schaue immer 3 Punkte an und schaue ob Links oder Rechtsdrehung) Bei rechtsdrehung ist Punkt innerhalb des Rechtecks
+- Interioer Elemination: Art wie die Punkte aus der Szene entfernt werden, ohne Komplizierte Datenstrukturen zu verwenden
+
+### Divide and Conquer bei Algorithmischen Problemen
+- Divide: P in etwa 2 gleich große Mengen aufteilen
+- Conquer: Berechnen CH(P1)
+- Rekursionsform mit logarithmischer Tiefe O(log(n) \cdot n \cdot log(n))
+- log Teil von Grapham Scan b ibei der rekursiven Form aufteilen (sortieren fällt weg)
+- 2 sortierte Listen mache Merge Schritt um 1 Liste zu bekommen
+
+### Jordan Test
+- Testet ob Punkt in Polygon liegt
+- mache Linie und bestimme Schnittpunkte mit Polygonkante: innerhalb wenn Anzahl der Schnittpunkte ungerade ist. $O(n)$
+
