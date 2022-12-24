@@ -775,18 +775,26 @@ Unterteile Graoh so, dass Kanten zwischen den Mengen minimale Kantengewichte hab
 ### Quicksort
 - Divide and conquer
 - nehme Pivot-Element und sortiere linken und rechten Teil rekursiv
-- Welche Laufzeit hat Quicksort, wenn die Aufteilung immer in einem festen Verhältnis erfolgt?
-- Benutze Rekursionsbäume für die Herleitung
+- linker Teil sind Elemente kleiner als das Pivot Element und rechter Teil alle die größer sind als Pivot
 - ![](2022-12-18-15-50-23.png)
 - ![](2022-12-18-15-50-41.png)
+- Der Worst-Case tritt auf bei stark vorsortierten folgen und das Pivot Element das letzte ist links sind n-1 Elemente und Rechts 0
+- $T(n) = T(n-1) + \Theta(n)  = T(n-2) + \Theta(n-1)+\Theta(n) ... = \Theta(\frac{n(n+1)}{2}) = \Theta(n^2)$
+- Best Case: in jeden aufteilungsschritt werden die listen halbiert, sodass $T(n)=2 \cdot T(n/2) + \Theta(n)$, damit liefert das Mastertheorem die Abschätzung $\Theta(n^k \cdot log(n)) = \Theta(n \cdot log(n))$
+- Average Case: $\Theta(n \cdot log(n))$
+- Worst case tritt in stark vorsortierten folgen auf
+- Verwende Zufallsstrategie  
+- In der Praxis ist quicksort nicht toll 
+
+### Welche Laufzeit hat Quicksort, wenn die Aufteilung immer in einem festen Verhältnis erfolgt (1/10, 9/10) (Average Case)?
+- Benutze Rekursionsbäume für die Herleitung 
+- Doese Bäume sind Rechts dann Tiefer als Links
 - Setze rekursiv ein Daraus ergibt sich das Pascalsche Dreieck mit den Binomialkoeffizienten
 - Auf einer Ebene
 - $T(1) = k => k \in O(1)$ tritt auf,wenn $(\frac{9}{10})^k n = 1$ ist
 - Es gibt ein Aufteilungsaufwand $cn$
 - Summen wegmachen, indem man mit andere Summe subtrahiert
-- Worst case tritt in stark vorsortierten folgen auf
-- Verwende Zufallsstrategie  
-- In der Praxis ist quicksort nicht toll :(
+
 - Laufzeit bei eingeschränktem Wertebereich (ca. Quadratische Laufzeit (Worst-Case tritt ein))
 - Viele Zahlen aus kleinem Wertebereich führen zu Worst Case, da viele Zahlen doppelt vorkommen
 - Viele doppelte Zahlen
@@ -794,15 +802,32 @@ Unterteile Graoh so, dass Kanten zwischen den Mengen minimale Kantengewichte hab
 - In Standard lib ist kein 3 wege split implementiert
 - Rekursionstiefe ein Problem
 
+### 3 Way partion Quicksort
+- Verbessert den Quicksort, wenn viele Werte zu sortieren sind
+- Die Gesamte Folge $a[l]...a[r]$ wird in 3 Teilfolgen $F_l, F_m, F_r$ aufgeteilt
+- $F_l$ sind alle Elemente < k
+- $F_m$ sind alle Elemente = k
+- $F_r$ sind alle Elemente > k
+
+### Quicksort mit Beschränkter Rekursionstiefe
+- Worst case Baum ist n tief also O(n), da eine Seite nichts macht
+- Dies kann man auf $O(log(n))$ verbessern, indem man soalnge das kleine Teilproblem rekursiv löst, bis die andere Seite größer ist, und den Rest dann iterativ macht
 ## Heap-sort
 - Heap ist ein Array als Binärbaum vorgestellt
 - Heap erfüllt die Heap-bedingung (Nachfolger kleiner als vorgänger  (bei maxheap) bei minheap andersrum)
 - Ablauf: Zahlen Tauschen -> Versickern(wegen verletzter heap bedingung) -> Tauschen -> versickern etc
-- höchstens n-1 viele Vertauschungen -> Versickern (log n), weil Binärbaum Tiefe log n hat.
-- Initialer Schritt heap erstellen
+- höchstens n-1 viele Vertauschungen -> Versickern (log n), weil Binärbaum Tiefe log n hat (Anzahl vertauschungen Wurzel bis ganz unten).
+- Versickern lassen ist das zum richtigen Heap machen
+- Initialer Schritt Baum aus Array erstellen
+- Max Heap Aufsteigend soriteren
+- Min Heap Absteigend sortieren
 - Heap erstellen dauert n log n, weil nur versickerungsschritte
 - Auch in linearer Zeit möglich
-
+- Fange von hinten aus im Array an
+- Nachdem man gültigen Heap hat, wird die Wurzel mit dem größten Knotenindex getauscht (die getauschte Zahl (Wurzel) gehört dann zum soriteren Array) 
+- dann wird wieder ein gültiger Heap hergestellt
+- Das Array wird dann von hinten absteigend sortiert und rausgenommen
+- Heap erstellen ist $O(n)$
 ### Warum nimmt man kein Heap-sort
 - Man hat große Sprünge im Speicher -> Viele Cache Misses
 - Cache misses -> ca. 50-fache Zugriffszeit, deshalb ist mittlere Laufzeit schlechter als Quicksort
@@ -811,8 +836,9 @@ Unterteile Graoh so, dass Kanten zwischen den Mengen minimale Kantengewichte hab
 ### Merge-sort
 Benötigt linear viel Speicher und wird deshalb nicht so gerne verwendet
 
-## Wie zeigt man die Untere Schranke
+### Wie zeigt man die Untere Schranke
 mithilfe von Entscheidungsbäumen
+- Jeder Knoten entspricht einem Vergleich zwischen 2 Elementen im Array
 Stelle entscheidungsbaum auf, um Laufzeit des Algorithmuses zu ermitteln
 Laufzeit ist Wurzel bis Blatt für eine Konkrete Situation
 - Worst case laufzeit ist maximale Tiefe
@@ -820,18 +846,65 @@ Laufzeit ist Wurzel bis Blatt für eine Konkrete Situation
 - es gibt n! viele Blätter (Permutationen)
 - Beweis erfolgt mithilfe der Stirling Formel und logartimus regeln
 - Average Laufzeit erfolgt mithilfe von Widerspruch
+  ![](2022-12-24-12-39-59.png)
 
-## Sortieren mit SChlüsselvergleichen geht nicht besser als O(nlog n)
+
+### Sortieren mit Schlüsselvergleichen geht nicht besser als $O(nlog n)$
 - Bessere Verfahren sind Counting Sort, Radix-Sort, Bucket-Sort
 
 ### Counting sort
+- Input sind Integers
+- Man braucht Anzahl k = Anzahl an uniqen Items
 - Fester Wertebereich. Zähle wie oft Array gefunden wird.s
-- benutze Count Array in größe des Wertebereiches
+- benutze Count Array in größe des Wertebereiches, indem entsprechend die Werte inkrementiert werden
+- Beim einsortieren wird im original Array ganz hinten angefangen und im Count Array geguckt welche Zahl für den Wert drin steht. Im sortierten Array wird der Wert dann an diese Position eingefügt und die Zahl im Count Array dekrementiert
 - Bilde Summen auf dem Count array -> Anschließend kann man ablesen welche Zahl an welche Stelle geschirebn werden kann.
+- Laufzeit $\Theta(n+k)$, initialisieren + häufigkeiten zählen, + akkumulieren + einfügen
+- ![](2022-12-24-13-19-32.png)
+- ineffizient gegenüber Laufzeit und Speicherplatz
+- 
 
 ### Radix-sort 
-funktioniert nur für integer werte, niht für double werte, für strings auch nicht, deshalb nicht in standardbib verwndet
+- funktioniert nur für integer werte, niht für double werte, für strings auch nicht, deshalb nicht in standardbib verwndet
+- Es wird anhand der Ziffern sortiert
+- Man fängt mit der letzten Ziffer an
+- 9 (0-9) Buckets in dem die Werte anahnd der letzten Ziffer einsortiert werden 
+- Danach 2. Durchgang (mit 2ter Ziffer weitermachen)
+- Wenn Zahlen ungleiche länge haben kann man 0 am Anfang ergänzen
+- im dritten durchluf dann 100er stellen (die letzten beiden Ziuffern sind dann schon sortiert)
+- Laufzeit $O(n \cdot l)$
+- l ist länge der Ziffer 999 -> l = 3
+- n sind Anzahl der Elemente
 
+### Bucket sort
+- Wie beim Radix Sort verwendet man Buckets
+- soviele Buckets wie unique Ziffern
+- soviele Durchläufe wie länge der Ziffern
+- Bei Double erzeuge Buckets im Wertebereich sodass die größte Ziffer reinpasst bsp: [0.1,0.2),[0.2,0.3),...,[0.5,0.6) wenn größte Ziffer 0.51 ist
+- nihct leere buckets sortieren
+- worst case: $O(n^2)$
+- best, average $O(n)$
+
+# Auswahlproblem
+- Bestimme Minimum, Maximum, Median einer Zahlenfolge
+
+### Selection Sort
+- Suche die kleinste Zahl in der Zahlenfolge
+- vergleiche 1. Zahl mit jeder anderen und wenn irgendeine Zahl kleiner ist setze diese als kleinste Zahl, tausche dann die kleinste Zahl mit dem Anfang und markiere diese als Sortiert, mache dann mit der 2. Zahl weiter, solange bis alle Zahlen sortiert sind
+- $O(i \cdot n)$ man muss i mal n elemente durchgehen und tauschen 
+
+### sortieren und selektieren
+- sortiere zuerst effizient (Merge oder Heapsort O(n log(n))) und greife dann nur noch auf Element an position i zu
+- Laufzeit ist die von Sortieren, Zugriff ist O(1) also egal
+
+### randomisiert
+- Idee wie beim Quicksort entsprechend auch die selben Laufzeiten 
+- Wähle ein Zufälliges Element und Parttioniere
+- Average Case: feste Aufteilung der Partiotion bsp 1/10 und 9/10
+- Partitionierung in O(n), wegen einmal durchlaufen und Elemente tauschen
+- worst case: Keine Aufteilung, rekursionsbaum wird immer nur um das pivot-element kleiner
+- best-case: 50/50 aufteilung
+- 
 ### Starke zusammenhangskomponente
 maximal: Es darf kein Knoten hinzugenommen werden und es bleibt weiterhin eine Starke zusammenhangskomponente
 - müssen maximal sein
