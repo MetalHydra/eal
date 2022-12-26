@@ -887,6 +887,7 @@ Laufzeit ist Wurzel bis Blatt für eine Konkrete Situation
 
 # Auswahlproblem
 - Bestimme Minimum, Maximum, Median einer Zahlenfolge
+- Hilft dabei ein Optimales Pivot Element zu finden um bsp. Worst Case beim Quicksort zu vermeiden
 
 ### Selection Sort
 - Suche die kleinste Zahl in der Zahlenfolge
@@ -904,7 +905,138 @@ Laufzeit ist Wurzel bis Blatt für eine Konkrete Situation
 - Partitionierung in O(n), wegen einmal durchlaufen und Elemente tauschen
 - worst case: Keine Aufteilung, rekursionsbaum wird immer nur um das pivot-element kleiner
 - best-case: 50/50 aufteilung
-- 
+
+### Median Strategie
+- Median in linearer Zeit finden
+- Findet den Median einer unsortierten Folge rekursiv
+- Zuerst werden alle Elemente in Buckets der größe 5 aufgeteilt
+- $\lceil n/5 \rceil$ Buckets
+- Finde in jedem Bucket den Median und schreibe diese in ein neues Array B, außerdem wird bestimmt welche Elemente kleiner oder größer als der Median sind (Konstant weil Bucket konstante größe hat)
+- Aus den $\lceil n/5 \rceil$ Medianen in Array B wird dann rekursiv deren Median ermittlet
+- Vergleiche Rang des Medians der Mediane mit dem des gesuchten Elementes
+- sind die gleich ist der Median gefunden
+- Ist der Rang kleiner, kann man alle Elemente verwerfen die kleiner sind, ist der Rang größer werden alle Elemente verworfen die größer sind
+- In jedem Schritt, fallen ca 1/4 Elemente weg, es wird dann rekursiv in dem übrig gebliebenen Teil weitergesucht
+- Buckets sind der größe nach sortiert
+- ![](2022-12-25-12-50-54.png)
+
+# Graphalgorithmen
+- $|V| = \mathcal{V}$
+- $|E| = \mathcal{E}$
+- Ein Graph kann maximal  $\frac{\mathcal{V} \cdot (\mathcal{V}-1)}{2} = \mathcal{E} \in O(\mathcal{V}^2)$ Kanten haben
+- häufig bei Routenplanung, Spielen, Schaltkreisanalyse, etc
+
+
+
+
+### Sind parallele Kanten oder Schleifen in ungerichteten Graphen möglcih?
+- parallele Kanten nein, Schleifen auch nicht weil u != v gelten muss
+  
+### Gewichtete Graphen
+- 3er Tupel $G(V,E,c)$
+- c sind zusätzliche Kosten, die z.B entfernungen angeben 
+  
+## Gerichteter Graph (Begriffe)
+- $G(V,E)$
+- Endliche Menge Knoten $V = \{v_1,...,v_n\}$
+- Eine Menge gerichteter Kanten zwischen den Knoten $E \subseteq V \times V$
+### Gerichtete Kante
+- eine Kante mit Startknoten u und Endknoten v: $(u,v)$
+
+### Kardinalität
+- Größe einer Menge = Anzahl der Elemente
+- Bei Graphen $size(G) = |V|+|E|$
+
+### Adjazent
+- $e = (u,v)$
+- 2 Knoten sind durch Kante verbunden
+- Die Kante e und ein Knoten u oder v sind zusammen inzident
+### Grad eines Knotens
+- Eingangsgrad: Anzahl der Einlaufenden Kanten eines Knotens indeg(u)
+- Ausgangsgrad: Anzahl der Auslaufenden Kanten eines Knotens outdeg(u)
+
+### Gerichteter Weg
+- Ein weg $p(v_1,...v_k)$ ist ein gerichteter Weg der länge k von Knoten u nach Knoten w falls $u=v_1$ und $w=v_k$ und $(v_{i-1},v_i) \in E für 1 \leq i \leq k$
+- Ein Start und ein Endknoten wobei für jedes Knotenpaar des Weges eine Kante existiert
+- Wenn kein Knoten mehrfach vorkommt, ist der Weg einfach
+- Ein gerichteter Weg ist ein Kreis, wenn ein Weg $p = (v_0,v_1,...,v_k,v_0)$ falls alle Kanten $(v_{i-1},v_i)$ und $(v_k,v_0)$ paarweise disjunkt sind
+
+### Teilgraph
+- $G'(V',E')$ ist Teilgraph von G: $G' \subseteq G$ falls $V' \subseteq V, E' \subseteq E$
+- Ein teilgraph heißt induzierter Teilgraph, falls $V' \subseteq V$ und $E' = E \cap (V' \times V')$
+- $G|_{v'}$ G von V' induziert
+
+### Ungerichtete Graphen
+- $G(V,E)$ sind Kanten ungeordnete paare
+- $E \subseteq \{\{u,v\} | u,v \in V, u \neq v\}$
+- $u,v \in V$
+- $e = \{u,v\}$ (Hier Mengenschreibweise beachten im Gegensatz zu gerichteten Graphen)
+
+### Adjazent (ungerichtet)
+- $e = \{u,v\}$
+- 2 Knoten sind durch Kante verbunden
+- Die Kante e und ein Knoten u oder v sind zusammen inzident 
+- inzident heißt die Kante hat den Knoten an einem ihrer Enden
+### Knotengrad
+- Keine Unterscheidung mehr in Start und Endknoten
+- deg(u), Anzahl der zu u inzidenten Kanten
+
+### ungerichteter Weg
+- $p = (v_0,v_1,...,v_k)$ ist ungerichteter Weg der länge k von knoten u nach Knoten w, wenn $u = v_0$, $w=v_k$ und $\{v_{i-1},v_i\} \in E für 1 \leq i \leq k$
+- Der ungerichtete Weg ist einfach, wenn kein Knoten mehrfach vorkommt
+- Der ungerichtete Weg $p=(v_0,v_1,...,v_k,v_0)$heißt Kreis und $\{v_{i-1},v_i\}, \{v_k,v_0\}$ sind paarweise Disjunkt
+
+### ungerichtete Teilgraphen
+- $G'(V',E')$ ist Teilgraph von G: $G' \subseteq G$ falls $V' \subseteq V, E' \subseteq E$
+- Ein teilgraph heißt induzierter Teilgraph, falls $V' \subseteq V$ und $E' = E \cap \{\{u,v\} | u,v \in V', u \neq v \}$
+
+## Speichern von Graphen
+1. Adjazenzmatrix
+- Matrix an der $a_{ij}$ ist 1, wenn Kante dazwischen existiert, sonst 0
+- ![](2022-12-25-14-35-03.png)
+
+2. Adjazenz-Liste
+- Speihhern in doppelt verketteter Liste $Adj[v]$, alle von v ausgehenden Kanten werden gespeichert 
+- ![](2022-12-25-14-36-49.png)
+
+3. Adjazenz-Array
+- Alle Kanten in Array, alle zu einem Knoten inzidenten Graphen liegen hintereinander im Array
+- ![](2022-12-25-15-16-05.png)
+- Adjazenz-Matrix: $O(n^2)$, für dichte Graphen
+- Adjazenz-Liste und -Array: $O(n+m)$
+- für dünn besetzte Matrizen
+
+# Breiten und Tiefensuche
+- Von einem gegebenen Startknoten s aus, sollen alle anderen Knoten gefunden werden
+- Breiten oder Tiefensuche werden durch die Datenstruktur D bestimmt, wenn D ein Stack ist, wird der Graph in einer Tiefensuche durchlaufen, wenn D eine Queue ist dann werden Knoten in einer Breitensuche durchlaufen
+
+### Tiefensuche
+- für jeden Knoten u wird eine Varaible b[u] verwendet, die Anfangs auf 0 gesetzt ist, das gibt an, das die Knoten noch nicht gefunden worden sind.
+- b[s] ist 1
+- Dann werden für den Startknoten s alle auslaufenden Kanten in die Datenstruktur D aufgenommen (insert)
+- Solange D nicht leer ist, wird eine Kante entnommen (extract), wenn der Zielknoten v der Kante (u,v) noch nicht besucht worden sind ist b[v] = 0 und di8e ausgehenden Kanten von v werden in D aufgenommen, dann wird b[v] = 1 gesetzt
+- Wenn D leer ist, ist ein Knoten u dann von s aus erreichbar, wenn b[u] = 1 ist
+- verschiedene Arten von Kanten die bei der Tiefensuche eine Rolle spielen
+- Baumkanten, Vorwärtskanten, Rückwärtskanten, Querkanten
+- Baumkante: Kante $(u,v) \in E$, Weg in dem die Tiefensuche abgearbeitet wird
+- Vorwärtskante: Kante $(u,v) \in E$ mit dfs[v] > dfs[u], kürzen Wege ab
+- Querkanten:Kanten $(u,v) \in E$ mit DFS[v] < DFS[u] und DFE[v] < DFE[u] sind Querkanten. von einen Teilbaum zu quer liegendem Teilbaum
+- Rückwärtskanten DFS[v] < DFS[u] und DFE[v] > DFE[u]: bilden mit den Wegen Kreise
+- Laufzeit $O(\mathcal{V}+\mathcal{E})$
+- DFS und DFB zähler: Nummerieren die Knoten in der Reihenfolge in der diese besucht werden
+- wegen dem Stack leicht zu implementieren
+- Ein Graph G(E,V) enthält kreise, wenn Tiefensuche eine Rückwärtskante liefert
+
+### Topologische sortierung
+- Man möchte die Knoten eines Graphen durchnummerieren
+- Gegeben ist gerichteter Graph G(V,E)
+- Gesucht ist nummerierung $\pi(v_1),...,\pi(v_n))$, sodass $(u,v) \in E$ und $\pi(u) > \pi(v)$ (Nachfolger ist immer größer)
+- Diese nummerirung existiert immer, wenn der Graph azyklisch ist
+- Für ein Kreisfreien Graphen ist die Topologische sortierung immer die dfe-nummer
+- Es gibt bei Topoligsicher Sortierung keinen Zyklus, da nachfolger kleiner wäre
+
+
+### Zusammenhangsprobleme
 ### Starke zusammenhangskomponente
 maximal: Es darf kein Knoten hinzugenommen werden und es bleibt weiterhin eine Starke zusammenhangskomponente
 - müssen maximal sein
