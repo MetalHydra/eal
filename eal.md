@@ -918,7 +918,8 @@ Laufzeit ist Wurzel bis Blatt für eine Konkrete Situation
 - Ist der Rang kleiner, kann man alle Elemente verwerfen die kleiner sind, ist der Rang größer werden alle Elemente verworfen die größer sind
 - In jedem Schritt, fallen ca 1/4 Elemente weg, es wird dann rekursiv in dem übrig gebliebenen Teil weitergesucht
 - Buckets sind der größe nach sortiert
-- ![](2022-12-25-12-50-54.png)
+- ![](2022-12-26-10-44-55.png)
+- 
 
 # Graphalgorithmen
 - $|V| = \mathcal{V}$
@@ -1019,11 +1020,12 @@ Laufzeit ist Wurzel bis Blatt für eine Konkrete Situation
 - verschiedene Arten von Kanten die bei der Tiefensuche eine Rolle spielen
 - Baumkanten, Vorwärtskanten, Rückwärtskanten, Querkanten
 - Baumkante: Kante $(u,v) \in E$, Weg in dem die Tiefensuche abgearbeitet wird
+- DFS ist Start und DFE ist endnummerierung
 - Vorwärtskante: Kante $(u,v) \in E$ mit dfs[v] > dfs[u], kürzen Wege ab
 - Querkanten:Kanten $(u,v) \in E$ mit DFS[v] < DFS[u] und DFE[v] < DFE[u] sind Querkanten. von einen Teilbaum zu quer liegendem Teilbaum
 - Rückwärtskanten DFS[v] < DFS[u] und DFE[v] > DFE[u]: bilden mit den Wegen Kreise
 - Laufzeit $O(\mathcal{V}+\mathcal{E})$
-- DFS und DFB zähler: Nummerieren die Knoten in der Reihenfolge in der diese besucht werden
+- DFS und DFE zähler: Nummerieren die Knoten in der Reihenfolge in der diese besucht werden
 - wegen dem Stack leicht zu implementieren
 - Ein Graph G(E,V) enthält kreise, wenn Tiefensuche eine Rückwärtskante liefert
 
@@ -1034,33 +1036,82 @@ Laufzeit ist Wurzel bis Blatt für eine Konkrete Situation
 - Diese nummerirung existiert immer, wenn der Graph azyklisch ist
 - Für ein Kreisfreien Graphen ist die Topologische sortierung immer die dfe-nummer
 - Es gibt bei Topoligsicher Sortierung keinen Zyklus, da nachfolger kleiner wäre
+- Entspricht der Endnummerierung (DFE) der Tiefensuche
 
-
-### Zusammenhangsprobleme
+### Kreisfreiheit Testen
+- Man geht aus das man ein Kreis hat
+- ![](2022-12-26-10-53-35.png)
+# Zusammenhangsprobleme
+- Ein Graph G(V,E)ist stark zusammenhängend, wenn es zwischen jedem Knotenpaar (u,v) einen Weg gibt
+- Eine starke zusammenhangskomponente von G ist bzgl. der Knotenmenge ein maximaler, stark zusammenhängender induzierter Teilgraph von G
+- wie findet man diese effizeint?
 ### Starke zusammenhangskomponente
 maximal: Es darf kein Knoten hinzugenommen werden und es bleibt weiterhin eine Starke zusammenhangskomponente
 - müssen maximal sein
 - schwach zusammenhängend,wenn man Kantenrichtungen ignoriert
 - laufzeit O(V+E)
 - Tiefensuche zum rausfinden ob Graph zusammenhängend ist
+- Algorithmus zum finden von Zusammenhangskomponenten 
+- mache 2 Entgegengesetzte Tiefensuchen
+- beginne auf dem Graphen G und mache eine Tiefensuche
+- Benutze dann eine 2. Tiefensuche auf dem invertierten Graphen
+- Beginne bei dem Knoten mit der höchsten dfe Endnummerierung
+- Diese Knoten die dann von s1 erreichbar sind, sind genau die, die zu einer starken zusammenhangskomponente führen
+- Mache dann immer mit einer Tiefensuche weiter deren dfe nummer noch nicht von einer anderen Tiefensuche abgearbeitet wurde
 
-## Anmerkung
-Keine Querkanten, forwärtskanten bei ungerichteten Graphen
+### Zusammenhangsprobleme ungerichtete Graphen
+- G(V,E) ist ein ungerichteter Graoh
+- Zusammenhängend, wenn es zwishcen jedem Knotenpaar $(u,v) \in V$ ein Weg in G gibt
+- G ist k-fach zusammenhängend, wenn es zwischen jedem Knotenpaar k Knotendisjunkte wege gibt
+- Eine k-fache zusammenhangskomponente von G ist ein maximaler k-fach zusammenhängender induzierter Teilgraph von G
+- Ein Knoten u ist ein Schnittpunkt (cut-point, articulation point), wenn der Graph G ohne u und seine inzidenten Kanten mehr zusammenhangskomponenten hat als G (da kann man abschneiden und man hat anschließend einzelne Komponentne)
+- Schnittpunkte in Graphen berechnen, ein Graph ohne schnittpunkt ist mindestens 2fach zusammenhängend
+### Anmerkung
+Keine Querkanten, forwärtskanten bei ungerichteten Graphen bei der Tiefensuche
 - Aus Querkanten würden Baumkanten werden
 - Man muss gucken ob es Rückwärtskanten gibt, die höher als eine Schnitttkanten läuft
 - Teilgraphen können nur über queerkanten verbunden werden
 - wichtig ist wie weit Rückwärtskanten zurückgehen (das ist der low Wert)
 
-## Spannbäume
-Ein Spannbaum Teilgraph eines ungerichteten Graphen, mit der gleichen Knotenmenge mit genau V-1 vielen Kanten und zusammenhängend ist
+
+# Spannbäume
+Ein Spannbaum ist ein Teilgraph T(V,ET) eines ungerichteten Graphen, mit der gleichen Knotenmenge mit genau $\mathcal{V}-1$ vielen Kanten und zusammenhängend ist
+- $E_T \in E$
 - man benötigt Kostenfunktion
+- T ist Kreisfrei und zusammenhängend = Baum
+- Gegeben ist ein ungerichteter zusammenhängender Graph $G(V,E,c)$ mit Kostenfunktion $c: R \rightarrow \mathbb{R}^+$
+- Gesucht ist spannbaum $T(V,E_T)$ von G mit minimalen Kosten $c(T) \Sigma_{e \in E_T}c(e)$
+- Tarjan, Karger, Klein bester algo, ist randomised-linear-time to find minimum spanning Trees $O(\mathcal{V}+\mathcal{E})$
+- man sagt T spannt G auf
 
+### Union find Datenstruktur
+- Jedes Element bekommt eine Nummer, die in einem Array gespeichert ist (Jedem Index ist ein Objekt zugewiesen)
+- Beim Union wird ein Objekt rausgenommen und an Wurzel gehängt dadurch ist das Objekt selber keine Wurzel mehr und bekommt im Array den Index des angehängten Objektes
+- ![](2022-12-26-12-27-25.png)
+- Bei bereits bestehenden Bäumen, werden diese komplett an die Wurzel angehängt
+- find Operation findet das Parent zu einem Knoten
+- Man kann Pfad-komprimierung anwenden -> damit lineare Laufzeit
+- find ist abhängig von der höhe der Bäume -> günstiger diese an die Wurzel zu hängen, das macht Union aber teuer
+- stattdessen find mit Pfadkomprimierung  verringert die Baumhöhe
+- Jeder Knoten hat Pointer auf Wurzel (kein durchlaufen nötig)
+- A = {2,3,5,7,11}, B = {3,5,7,9,13}
+- Laufzeit = Summe der Beiden Längen
+- #### Warum ist es nicht günstiger alle Knoten unter die Wurzel zu hängen?
+- Beschleunigung durch Pfadkomprimierung
+- Vorgänger speichern
+- Ziel ist das Verringern der Baumhöhe
 
-## Baum ist ein zusammenhängender azyklischer Graph
-- muss Kreisfrei sein
-
-## Kruskals Algorithmus
-- Union und findSet Operationen
+### Kruskals Algorithmus 
+- Union und findSet Operationen (für effizientes Arbeiten mit Mengen)
+- sortiere alle Kanten E nicht-absteigend nach Gewicht
+- Anschließend wird jede Kante rausgenommen und entschieden, ob die Kante auggenommen wird (aufnehmen, wenn es kein Kreis liefert)
+- Union Operation zum Mergen von Gruppen
+- Jedes Knotenpaar was noch nicht aufgenommen wird kommt in eine eigene Gruppe
+- Wenn das nächste Knotenpaar in eine bestehende Gruppe angeschlossen wird muss geguckt werden ob kein Kreis entsteht (find operaqtion)
+- Wenn eine Gruppe 2 Knoten in 2 verschieden Gruppen hat werden diese gemergt (Union Operation)
+- $O(\mathcal{E} \cdot log(\mathcal{V}))$
+- $O(\mathcal{E} \cdot log(\mathcal{E}))$: Kanten sortieren
+- $O(log(\mathcal{V}))$: findset
 
 ## Übung
 - h=0
@@ -1069,44 +1120,86 @@ Ein Spannbaum Teilgraph eines ungerichteten Graphen, mit der gleichen Knotenmeng
 - $2^h+21h=2*2^h=2*2^{h+1}$
 - E <= V^2
 
-## Warum ist es nicht günstiger alle Knoten unter die Wurzel zu hängen
-- Beschleunigung durch Pfadkomprimierung
-- Vorgänger speichern
-- Ziel ist das Verringern der Baumhöhe
 
-## Union Find algorithmus
-- Apspeichern von Mengen, macht Union und Find Operationen schnell
-A = {2,3,5,7,11}
-B = {3,5,7,9,13}
-Laufzeit = Summe der Beiden Längen
 
-## Prim Algorithmus:
+#### Prim Algorithmus:
 - Laufzeit je nach implementiertem ALgorithmus
+- Knoten sind nach Kantenwerten gewichtet
+- verwenden einer Datenstruktur Q, die als Priority Queue verwendet wird
 - Binärheap bei vielen Kanten teilweise schlechter
-
-## Kürzeste Wege
-Für kürzeste Wege gilt die Dreiecksungleichung
+- ungerichteter Graph
+- Alle Knoten sind zuerst mit unendlich initialisiert
+- Der Algorithmus läuft solange durch bis Queue leer ist
+- Die Laufzeit von Prims Algorithmus hängt von der verwendeten Datenstruktur ab
+- ![](2022-12-26-17-29-17.png)
+# Kürzeste Wege
+Wird bei Routing eingesetzt (OSPF), Reiseplannung oder Kostenminimierung.
+Das finden eines längsten Pfades ist NP-vollständig, man kann eine Reduktion vom Hamilton-Pfad auf den Längsten Pfad angeben.
+Bei kürzesten Wegen ist das aber egal, da man nicht wieder zum Anfang zurück muss.
+Minimale Spannbäume != kürzeste Wege
+Für kürzeste Wege gilt die Dreiecksungleichung, d.h es gilt $\delta(u,w) \leq \delta(u,v) + \delta(v,w)$
+- Kreise mit negativen Kantengewichten würden die Gesamtstrecke in jedem Zyklus verkürzen, da immer die minimale distanz genommen würde
+- einfache Wege sind wege, wenn kein Knoten mehrfach in diesem Weg vorkommt
+- kürzeste (einfache Wege) ist NP-vollständig, Reduktion von den Längsten Wegen (man muss alle Kantengewichte der längsten Wege mit -1 Multilizieren)
 
 ### Dijkstra Algorithmus
 - S hat nichts mit dem Algorithmus zu tun, nur für Beweis notwendig
 - Dijkstra zu modifizieren, ändert Laufzeit, eventuell läuft man in endlosschleifens
 - Keine Negativen Kantengewichte
+- Man hat wie bei Prim eine Datenstruktur Q die Knoten verwaltet, die Laufzeit ist ebenfalls wie bei Prim
 - verwende stattbesseden Bellman/Ford
+- 2 Wesentliche Operationen ExtractMin und DecreaseKey
+- ExtractMin holt den Knoten mit minimaler Distanz aus der Queue und macht mit dem weiter
+- DecresyKey setzt die Werte der Nachbarn in der Queue
+- Initialisierender Queue $O(\mathcal{V})$
+- Laufzeit = $T=\Theta(\mathcal{V} \cdot T_{ectractmin} + \Theta(\mathcal{E} \cdot T_{DecreaseKey}))$
+- Jeder Teilweg eines kürzesten Weges ist ebenfalls ein kürzester Weg
+- ![](2022-12-26-18-43-09.png)
 
-## Bellman/Ford
-- negative Kantengewichte
+#### Warum addiert man nicht den Betrag des kleinsten Kantengewichtes auf alle Kantengewichte auf?
+- Man kann ein Beispiel konstruieren bei dem das nicht klappt
+- ![](2022-12-27-12-37-27.png)
+
+### Bellman/Ford
+- negative Kantengewichte sind erlaubt
 - Beschleunigung bei azyklischen Grpahen. Topologische Sortierung (Tiefensuche)
+- man hat wieder Graphen $G(V,E,c) mit c: E \rightarrow \mathbb{R}$ und startknoten $s \in V$
+- Laufzeit: $\Theta(V \cdot E)$
+- aüßere SChleife $\mathcal{V}-1$ mal durchalufen
+- innere Schleife $\mathcal{E}$ mal durchlaufen
+- Wenn ein Wert nach $d[v]$ nach $\mathcal{V}-1$ Durchläufen nihct konvergiert, dann ist dieser ein negativer Kreis der von s aus erreichbar ist
+- Berechen dann die Topologische sortierung und durchlaufe diese Knoten in dieser Reihenfolge und relaxiere die Kanten von $v \in Adj[u]$: falls $d[v] > d[u]+c(u,v)$ dann $d[v] := d[u] + c(u,v)$
+- Der Algorithmus, kann ausgeben ob negativer Kreis vorkommt
+- Erkennen ob negativer Kreis ist die 2. Schleife über alle Kanten
+# TODO
+### Bellman-Ford Korrektheit
+- für jedes v, $\delta(v,k)$
+- 
 
-## Floyd Warshall
+### Floyd Warshall
+- G darf keine negativen Kreise enthalten
+- Gesucht ist kürzester Weg für alle Knotenpaare
+- $\forall u,v \in V$ der kürzeste Weg von u nach v
+- negative Kantengewichte sind erlaubt
+- Algorithmus mithilfer dynamischer programmierung umgesetzt werden
 Bei einem kürzesten Weg sind auch alle Teilwege kürzeste Wege (Optimalitätsprinzip)
 Laufzeit $V^3$
 - Warum verwendet man 2Dimensionales Array bei 3 Parametern?
 - Kreis negativer länge erkennen: Diagonale angucken
+- Mann stellt Adjazenzmatrix auf
+- Knoten die von dem startknoten nicht erreicht werden können, sind mit unendlich initialisiert
+- man zählt eine Varialbe hoch bis Knotenanzahl erreicht ist
+- ![](2022-12-27-12-09-34.png)
+- Matrix durchlaufen und ersetzen $O(V^3)$
 
-## Transitiver Abschluss (Warshall)
+### Transitiver Abschluss (Warshall)
 welche Knoten stehen in Beziehung zueinander
 - 1->2->3->4->5
 - 1->3, 3->5, 2->4, etc
+- $G(V,E^*)$ mit $E^* \subseteq V^2$
+- Der Algorithmus beginnt mit der Adjazenzmatrix
+- Der Algorithmus läuft dann durch und die Adjazenzmatrix ist an der Stelle A[i][j] = 1, wenn es in G einen Weg $p(u_i,...,u_j)$ gibt.
+- ![](2022-12-27-12-33-17.png)
 
 # Netzwerke
 - Flüsse
@@ -1117,30 +1210,51 @@ welche Knoten stehen in Beziehung zueinander
 - Kapazität beschränkt
 - Fluss muss erhalten bleiben, kann nicht einfach verloren gehen
 - Fluss definiert als Kapazität die Einflisst - Kapazitäz die rausfließt
-- Quelle in Menge S und Senke in Komplementmenge
+- Quelle in Menge S und Senke in Komplementmenge (heißt s != t)
 - Wert des Flusses will man an jeden beliebigen Schnitt ablesen
 - Beweis über Induktion
 - Fluss ist immer so groß wie die Kapazität
+- Gegeben: Graph G(V,E,c) mit $c: E \rightarrow \mathbb{Q}^+$
+- Kapazitätsfunktion: ordnet jeder Kante eine Kapazität zu (c)
+- Quelle (s source), Senke (t, target)
+- Netzwerk ist dann Tupel aus den allen $H(V,E,c,\mathbb{Q}^+,s,t)$
+- Fluss geht von Quelle zu Senke
+### Flussfunktion
+Eine Funktion $f:E \rightarrow \mathbb{Q}^+$ mit Kapazitätsbeschränkung und Flusserhaltung.
+Die Kapazitätsbeschränkung ist definiert: $\forall e \in E: 0 \leq f(e) \leq c(e)$. Diese sagt aus, dass der Flussfunktion niemals größer als die maximale Kapzität werden kann. Für die Flusserhaltung muss gelten: $\forall v \in V - \{s,t\} \\ \Sigma_{e \in In(v)}f(e) = \Sigma_{e \in Out(v)}f(e)$. In Worten: Die Menge die in einen Knoten einfließt, muss auch wieder genauso rausfließen. $F(f) = \Sigma_{e \in out(v)}f(e) - \Sigma_{e \in In(v)}f(e)$
 
-## Pfad 
+### Schnitt eines Flusses (s-t Schnitt)
+Gegeben ist ein Netzwerk H, sei $S \subset V$ eine Teilmenge der Knoten mit $s \in S$ und $t \notin S$, sei $\bar{S} = V - S$. 
+- $E(S,\bar{S}) := \{(x,y)|x \in S ,y \in \bar{S}\} \cap E$
+- $E(\bar{S},S) := \{(x,y)|x \in \bar{S},y \in S\} \cap E$
+Also Teilmenge wo die quelle drin ist, aber die senke nicht
+Der Schnitt des Netzwerkes: $H(S):=E(S,\bar{S}) \cup E(\bar{S},S)$
+H(S) enthält alle Kanten die aus der Menge $S$ in $\bar{S}$ laufen und umgekehrt.
+![](2022-12-27-14-53-36.png)
+- Die Kapazität des Schnittes ist dann $c(S):=\Sigma_{e \in E(S,\bar{S})}c(e)$ = Summe aller rausführenden Kantenfür alle Knoten im Schnitt
+
+### Max-Flow Min-Cut Theorem
+Die Minimale Kapazität eines s-t Schnittes ist der Maximale Wert eines s-t Flusses
+- $F(f) = c(S) $ -> F ist maximal, c(S) ist Minimal
+- Wenn man Maximal Fluss mit ford-Fulkerson bestimmt, kann man optimalen Schnitt bestimmen
+- 
+### Pfade in Netzwerkflüssen 
 - kann Rückwärtskanten erhalten
+- Knotenfolge $P = u_1,...,u_k$, sodass für jedes Knotenpaar $u_i,u_{i+1}, 1 \leq i \leq k-1$,entweder $(u_i,u_{i+1})$(Vorwärtskante) oder $(u_{i+1},u_i)$(Rückwärtskante) eine Gerichtete Kante ist
 
-## Flussalgorithmen
+### Flussalgorithmen
 - beginnen bei beliebiger Flussfunktion f(e)
 - Fluss der über Kante nicht brauch toleranz (nicht max kapazität)
 - man muss zeigen dass der Fluss vergrößert wurde und das die Kapazität nicht überschritten wird
 - weil delta e kleinster Wert ist
 
-## Wie findet man Pfad
+### Wie findet man Pfad?
 - Tiefensuche funktioniert nicht
 - Restgraph erstellen
 - Rückwärtskanten immer wenn wert nicht 0 null (Wert muss man vermindern können)
 - Falsche Entscheidungen Beim Graphen führen zu nicht maximalen Graphen (Die muss korrigert werden, mithilfe von Rückwärtskanten), Tiefensuche über Rückwärtskanten
 
-## Max-Flow Min Cut
-### TODO
-
-## Netzwerkfluss nach Edmonds Karp
+### Netzwerkfluss nach Edmonds Karp
 - Schichtengraph = Restgraph wo Kanten gestrichen worden sind
 - Laufzeit: $O(E^2*V) <= O(V^5)$
 - nicht nutzbar praktisch
