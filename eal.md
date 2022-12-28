@@ -1242,38 +1242,79 @@ Die Minimale Kapazität eines s-t Schnittes ist der Maximale Wert eines s-t Flus
 - kann Rückwärtskanten erhalten
 - Knotenfolge $P = u_1,...,u_k$, sodass für jedes Knotenpaar $u_i,u_{i+1}, 1 \leq i \leq k-1$,entweder $(u_i,u_{i+1})$(Vorwärtskante) oder $(u_{i+1},u_i)$(Rückwärtskante) eine Gerichtete Kante ist
 
-### Flussalgorithmen
-- beginnen bei beliebiger Flussfunktion f(e)
-- Fluss der über Kante nicht brauch toleranz (nicht max kapazität)
-- man muss zeigen dass der Fluss vergrößert wurde und das die Kapazität nicht überschritten wird
-- weil delta e kleinster Wert ist
-
 ### Wie findet man Pfad?
 - Tiefensuche funktioniert nicht
 - Restgraph erstellen
 - Rückwärtskanten immer wenn wert nicht 0 null (Wert muss man vermindern können)
 - Falsche Entscheidungen Beim Graphen führen zu nicht maximalen Graphen (Die muss korrigert werden, mithilfe von Rückwärtskanten), Tiefensuche über Rückwärtskanten
 
+### Restgraphen (Residualgraphen)
+- $G_R(f)=(V,E_R)$ ist Restgraph zu f
+- Für jede Kante $e \in E$ von u nach v gibt es im Restgraph eine Kante von $u \rightarrow v: c(e)-f(e), \ falls \ c(e) > f(e)$
+- und eine Kante $v \rightarrow u, \ falls \ f(e) > 0$
+- Beschreibt über Kanten wie ein bestehender Fluss noch geändert werden kann.
+- Rückwärtskanten geben an, wieviel an maximaler Kapazität verbraucht worden ist
+- Um ein Maximalen Weg zu finden guckt man nach zunehmenden (augmentierenden) Pfaden in dem Restgraph
+- Kanten beschreiben die noch möglcihen Flussvergrößerungen
+- Ein zunehmender Weg ist ein Weg im Restgraphen von s nach t (heißen so, weil diese den Fluss erhöhen): $\Delta(P) > 0$ Wege werden größer (immer wer min wert eines weges)
+- Vorwärtskanten hat nur nur wenn etwas übrigbleibt
+
+### Maximaler Fluss
+- $F(f)$ ist maximal, wenn es kein zunehmenden Weg im Restgraph gibt, sonst könnte der Weg ja noch erhöht werden.
+
+### Ford-Fulkerson Algorithmus
+Man sucht einen beliebigen zunehmenden Pfad und erhöht den Fluss entlang des Pfades um $\Delta(P)$.
+1. Wähle Pfad aus und Zeiche Restnetzwerk
+2. nehme dann einen weiteren Zunahmepfad aus G raus
+Terminiert nicht immer bei rationalen Kantengewichten
+- abhängig von Kantengewichten, ungünstig wäre erhöhung immer um 1 -> sehr viele iterationen
+- Laufzeit ist in Eingabegröße nicht Polynomiell, da Zahlen binärkodiert werden und deshalb logarithmische länge haben
+- Ermittle jeden Weg von s-nach t
+- Baue Restgraph für jeden Pfad und den Rest ubernehme vom vorherigen
+- Maximaler Fluss, wenn es keinen Pfad von s nach t gibt (Abbruch)
+- Mache Schnitt entweder bei s oder bei t und summiere ausgehende Kantengewichte = Wert des maximalen Flusses
 ### Netzwerkfluss nach Edmonds Karp
 - Schichtengraph = Restgraph wo Kanten gestrichen worden sind
-- Laufzeit: $O(E^2*V) <= O(V^5)$
+- Zeitkomplexität nicht meht von Kantenkapazitäten abhängig
+- Laufzeit: $O(E^2 \cdot V) <= O(V^5)$
+- Benutzt eine Breitensuche $O(\mathcal{E})$, sodass in jeder iteration der kürzeste Pfad gefunden wird
 - nicht nutzbar praktisch
+- Man baut aus dem Restgraph einen weiteren Graph names Schichtengraph (Levelgraph) $L(G_R)$auf der die Kanten aus dem Restgraph enthält, für die $\delta(s,v)=\delta(s,u)+1$gilt  also die Kanten, die minimale Längen haben, Schichtengraph wird per Breitensuche aufgebaut
+- Dieser Schichtengraph enthält nur Kanten die von einem Level in das nächste gehen (Rückswärts zbd seideway Kanten führen nicht dazu, dass man am schnellsten zur Senke kommt)
 
-## Dinic
-- Baue Schichtengraph auf
+
+### Dinic
+- Man versucht alle kürzesten Wege mit gleicher Kantenanzahl in einer Runde zu finden
+- Baue Schichtengraph auf mit Breitensuche $O(\mathcal{E})$
 - finde einen Blockiredenfluss und berechene neue Flussfunktion
 - baue danach wieder Restgraph
+- Wenn senke niemals beim aufbau des Schichtengraphs erreicht wird, dann stoppe und gebe maximalen Fluss zurück
+- Finde Wege von s -> t, bis ein Blockierender Fluss erreicht ist Tiefensuche
 - $O(E^2*V)$
-
+- Blockierender Fluss: Kanten die den Durchlaufen Blockieren, da die maximale Kapazität ausgeschöpt ist
+- Falls sackgasse gefunden wird, backtracke
+- Finde min wert für ein Weg undmodifizeire Gewichte, gesättigte Kanten entfernrn
+- pro iteration soviele Tiefensuchen, bis kein Pfad mehr vorhanden ist, dann wieder neuen Schichtengraph bauen und das slebe von vorne
+- In jeder Phase werden gesättigte Kanten entfernt und Knoten die in sackgassen enden
+- Laufzeit: $O(\mathcal{V})$ pahsen und jede Phase dauert $O(\mathcal{V} \cdot \mathcal{E})$ -> $O(\mathcal{E} \cdot \mathcal{V}^2)$ 
+#### Blockierenden Fluss finden?
+- Wiederholende Tiefensuche bis kein weg von s-> t mehr da ist
 # Klausur
 - Was ist ein Fluss, Flussfunktion, Restgraph, Schichtengraph, Flusserhaltung, warum Rückwärtskanten
 
-## Push Relabel Algorithmus
-- Gegeben NEtzwerk mit Kapazitätsfunktion
+### Präfluss
+- Gegeben ist ein Netzwerk. Eine Funktion $f:E \rightarrow \mathbb{R}^+$ heißt Präfluss
+- wenn der Fluss über die Kante nicht größer als die Kapazität ist. $0 \leq f(u,v) \leq c(u,v) \forall (u,v) \in E$
+- An jeden Knoten $v \in V - \{s,t\}$ außer der Quelle und der Senke kann ein Übershuss existieren $excess_f(v) := \Sigma_{e \in In(v)} f(e) -\Sigma_{e \in Out(v)} f(e) \geq 0$
+- Alle Flüsse sind Präflüsse mit Überschuss 0
+### Push Relabel Algorithmus
+- Gegeben Netzwerk mit Kapazitätsfunktion
 - Flusserhaltung wird vernachlässigt -> PRäfluss wird definiert
-- Ein Knoten hat überschuss, dann heißt der aktive(active)
+- Bei einem Präfluss darf der Eingangsfluss größer als der ausgangsfluzss sein(überfluss)
+- Ein Knoten hat überschuss, dann heißt der Knoten aktiv(active)
+- über Kanten wird dann versucht, den Überschuss in Richtung senke abzubauen
 - Knoten werden höhen zu geordnet (Wasser kann nur von höher zu niedriger fließen)
-- Kante von u -> v Kante muss Kapazität über 0 sein
+- Kante von u -> v Kante muss Kapazität über 0 haben
 - Relabel Funktion hebt einen Knoten an(macht höhe größer)
 - Es muss ein Weg existieren von Knoten mit Überschuss zu Quelle s
 - s muss in der Menge aller erreichbaren Knoten liegen
@@ -1286,13 +1327,28 @@ Die Minimale Kapazität eines s-t Schnittes ist der Maximale Wert eines s-t Flus
 - Potential funktionenen für die Abschätzung von nicht sättigenden Push Operationen
 - Präzisierung des Algorithmuses führt zu $O(V^3)$
 - Wird schneller, da kein Fluss aufrecht erhalten werden muss, sondern ein Präfluss verwendet wird
-  
-- Edmond-Karp: $O(V E^2) = O(V^5)$
-- Dinic; $O(V^2 E) = O(V^4)$
-- Push Relabel: $O(V^3)$
+
+### Push Relabel nach Goldberg-Tarjan
+- Push Operationen Push(u,v) verschieben teile des Überschusses von Knoten u nach v
+- unter Bedingungen
+- 1. u muss noch Überschuss haben $excess_f(u)$
+- 2. Im Restgraphen gibt es eine Kante von u -> v über die der Überschuss abgeleitet werden kann $c_f(u,v)>0$
+- height(u) > height(v): Überschüsse können nur von höher nach niedriger abfließen
+-Relabel Operation Relabel(u) hebt einen Knoten soweit an, der die höhe um 1 größer ist, als der niedrigste Nachbarknoten
+- Bedingung: 1. Es muss ein Grund nfür erhöhung geben (Überschuss abbauen)
+- 2. Alle Benachbarten Knoten liegen höher oder gleich hoch $height(u) \leq height(v) \forall (u,v) \in E_f$
+- Eine Kante heißt zulässig(admissible), wenn $height(u) \leq height(v)+1$
+- ![](2022-12-28-17-07-07.png)
+- Überschuss muss in Richtung t abgebaut werden, Knoten werden deshalb nur soweit angehoben, dass der Überschuss in Richtung der kleinsten höhe abfließt
+- Höhe der Knoten sind untere Schranken für die länge der kürzesten Wege
+### Vergleich Laufzeit der verschiedenen Verfahren
+1. Edmond-Karp: $O(V E^2) = O(V^5)$
+2. Dinic; $O(V^2 E) = O(V^4)$
+3. Push Relabel: $O(V^3)$
 
 # Matching Probleme
-## Matching
+### Matching
+Matching bezeichnet eine Teilmenge $M \subseteq E$ der Kanten, sodass keine 2 Kanten aus M einen gemeinsamen Endknoten haben. Ein Maximales Matching ist dabei ein Matching was nicht vergrößert werden kann und ein Maximum Matching ist das größte Matching.
 - Größtes Matching hat V/2 Kanten
 
 ### Maximum weight Matching
