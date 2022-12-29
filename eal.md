@@ -1120,8 +1120,6 @@ Ein Spannbaum ist ein Teilgraph T(V,ET) eines ungerichteten Graphen, mit der gle
 - $2^h+21h=2*2^h=2*2^{h+1}$
 - E <= V^2
 
-
-
 #### Prim Algorithmus:
 - Laufzeit je nach implementiertem ALgorithmus
 - Knoten sind nach Kantenwerten gewichtet
@@ -1350,11 +1348,13 @@ Terminiert nicht immer bei rationalen Kantengewichten
 ### Matching
 Matching bezeichnet eine Teilmenge $M \subseteq E$ der Kanten, sodass keine 2 Kanten aus M einen gemeinsamen Endknoten haben. Ein Maximales Matching ist dabei ein Matching was nicht vergrößert werden kann und ein Maximum Matching ist das größte Matching.
 - Größtes Matching hat V/2 Kanten
-
+- Jeder Knoten ist nur mit einem anderen Knoten aus der anderen Menge verbunden
+- Berges Theorem: gegeben ist ein Graph G und ein Matching M, wenn kein Alternierender Pfad in G ist, ist M ein Maximales Matching
+- Wenn M ein Maximales Matching ist, gibt es in G keine Augmentierenden Pfade
 ### Maximum weight Matching
 - Summe der Kanten des Matchings
 
-### Matching ikn bipartiten Graphen
+### Matching in bipartiten Graphen
 - Baue aus bipartitem Graph ein Netzwerk und wende Flussalgorithmen darauf an
 - Aus zunehmenden Wegen werden Alternierende Wege
 - Abwechselnd freie und Gebundee Kanten
@@ -1363,36 +1363,102 @@ Matching bezeichnet eine Teilmenge $M \subseteq E$ der Kanten, sodass keine 2 Ka
 - Verwende Breitensuche um zunehmend alternierende Wege zu finden
 - Algorithmus von Hopcroft und Karp (verbesserter Algorithmus)
 
+### bipartite Graphen
+Ein Graph heißt bipartit, wenn man die Knoten so 2 in 2 $V_1,V_2 \subseteq V$ Mengen zerlegen lässt, dass
+1. $V_1 \cup V_2 = V$ 
+2. $V_1 \cap V_2 =\emptyset $
+Kanten führen nur von einer Menge in die andere, Knoten in einer Menge sind untereinander nicht verbunden: $\forall \{u,v\} \in E$ gilt: $u \in V_1, v \in V_2$ oder umgekehrt
+
+### Matching in Bipartiten Graphen mit Flussalgorithmus
+Man konstruiert einen Netzwerk G'(V',E',c) aus bipartitem Graphen G
+1. Füge start und Endknoten zum bipartiten Graphen hinzu $V'=V \cup \{s,t\}$
+2. $E'=\{s\} \times V_1 \cup \{(u,v) \in V_1 \times V_2 | \{u,v\} \in E \} \cup V_2 \times \{t\}$
+3. $c: E' \rightarrow \mathbb{N} mit c(e)=1$
+4. ![](2022-12-29-13-40-43.png) (Kanten haben Kapazität 1 und initialflow 0)
+5. Führe max-Flow Algorithmus aus
+6. Am Ende bilden die Kanten mit dem Flusswert 1 das größte Matching
+
+### Bipartites Matching ohne Flussalgorithmen
+Man sucht nach zunehmend alternierenden Wegen im Graphen
+- Gegeben Graph G(V,E) und ein Matching $M \subseteq E$
+- Kanten in M sind gebundene Kanten, alle anderen Kanten sind frei
+- Knoten an gebundenen Kanten sind gebundene Knoten, alle anderen sind freie Knoten
+- alternierende Wege, sind Wege $P(v_1,...,V_k)$ der abwechselnd aus freien und gebundenen Kanten besteht
+- Ein alternierender Weg, kann zunehmend alternierend sein, wenn $v_1$ und $v_k$ ungleich sind und beide Endknoten mit keiner gebundenen Kante inzident sind.
+- Diese werden benutzt um ein bereits vorhandenes Matching zu vergrößern.
+- Algorithmus von Hopcroft-Karp
+
+### Breitensuche zum finden von Alternierenden Pfaden
+- Man sucht Alternierenden Pfad und tauscht kanten um das Matching zu vergrößern
+- Man beginnt mit einem Freien Knoten und guckt sich mit Breitensuche die Nachbarn an
+- Dann geht man immer abwechslend gebundene und Freie Kanten hinzu. Wege die das nicht erfüllen ist Sackgasse und der andere Nachbar wird betrachtet
+- ![](2022-12-29-16-02-34.png)
+- In jeder Iteration wird eine Breitensuche in $O(\mathcal{E})$ gemacht, wenn Augemtierender Pfad da ist, nimmt man das größere Matching, sonst bricht man ab
+- das wird für jeden Knoten gemahct: $O(\mathcal{V})$ -> $O(\mathcal{V} \cdot \mathcal{E})$
+### Hopcroft-Karp Algorithmus
+- Gegeben ein Bipartiter Graph G
+- findet ein Maximales Matching
+- Baut einen Schichtengraph auf
+- Matching wird erst mit der leeren Menge initialisert
+- Aufbauen eines alternierenden Level-Graphen mit einem freien Knoten als Wurzel mithilfe von Breitensuche
+- $O(\sqrt{\mathcal{V}} \cdot \mathcal{E})$
 ### Kann man so ein Matching auf Algemeine Graphen anwenden?
 - Problem: Bei der Breitensuche kann Fehler passieren
 - Problem besuchte Knoten werden nur 1mal verwendet (Ist aber notwendig)
 - Parität: Knotenlänge gerade oder ungerade
-- Kreise mit ungeraden Längen sind Probleme (Blüten)
+- Kreise mit ungeraden Längen sind Probleme (Blüten), da in diesen kein alternierender Weg gefunden werden kann, da man immer zu einem bereits besuchten Knoten zurückkommt.
+- ![](2022-12-29-16-18-34.png)
+- ab Knoten u3 wird in einen Kreis gelaufen (erste und letzte Kante in dem Kreis sind frei)
+- Diesem Problem kann man begegnen indem man die Blüte zu einem Knoten $u_B$ zusammenfasst und anschließend wieder Rückgängig macht
+- ![](2022-12-29-16-23-07.png)
 - Schrumpfe Blüte auf 1 Knoten zusammen (am Ende wieder rückgängig machen)
-
-## Spezielle Graphklassen
+- Edmonds Algorithmus zum finden 
+# Spezielle Graphklassen
+- Spezielle Graphklassen können dabei helfen, Schwere Probleme effizient zu lösen
 - Bei n clique mindestens 4 Farben zum Einfärben
 - Graphklassen die die Probleme effizient lösen
 
-### Grapheigenscahft
-- Menge von Graphen
+### Definitionen
+- Gegeben: ungerichteter Graph G(V,E)
+- Anzahl der Knoten einer Maximum-Clique wird mit $\omega(G)$ bezeichnet (Cliquenanzahl)
+- $C_1,...C_k$ sind Cliquen in G die G partitionieren: $V = C_1 \cup...\cup C_k$ und $C_i \cap C_j \forall 1 \leq i,j \leq k, i \neq j$ dann sind $C_1,...C_k$ eine Cliquenpartitionierung der größe k
+- Größe der kleinstmöglichen Cliquenpartitionierung ist $\theta(G)$ und wird Cliequenüberdeckungszahl genannt. (Clique-Cover number)
+- Die Teilmenge I aus V $I \subseteq V$, deren Knoten paarweise nicht adjazent sind,sind eine unabhängige Menge (independent set)
+- Die Anzahl der Knoten eines Independent Sets mit Maximaler Kardinalität ist $\alpha(G)$ und heißt unabhängigkeitszahl oder Stabilitätszahl
+- Sein $I_1,...,I_k$ unabhängige Mengen von G, Stellen diese unabhängigen Mengen eine Partiotionierung des Graphen G dar, so spricht man von einer k-Färbung (k-coloring)
+- Das minimale k, für das eine, wird mit $\mathcal{X}(G)$ bezeichnet und heißt Färbungszahl oder chromatische Zahl (chromatic number)
+
+### Allgemeine Eigenschaften
+- $\omega(G) \leq \mathcal{X}(G)$: Alle Knoten einer Clique müssen in unterschiedlichen Farben gefärtb sein
+- $\alpha(G) \leq \theta(G)$: Alle Knoten eines Independent Sets liegen in verschiedenen Cliquen einer Cliquen-Partitionierung
+- $\omega(G) = \alpha(\bar{G})$: Clique mit maximlaer Kardinalität entspricht unabhängiger Menge mit max. Kardinaliät in Komplement Graph
+- $\mathcal{X}(G) = \theta(\bar{G})$: k-Färbung in G entspricht Cliquen-Partitionierung im Komplement von G $\bar{G}$
+### Grapheigenschaft
+- isomorph: Jeder Knoten eines Graphen G1 kann genau einem Knoten des Graphen G2 zugeornet werden
+- Grapheigenschaften sind monoton, wenn diese Eigenschaft auch für jeden Teilgraph gilt
+- - Grapheigenschaften sind hereditär, wenn diese Eigenschaft auch für jeden induzierten Teilgraph gilt
 - Monoton (Jeder Teilgraph eines Baumes ist ein Baum)
 - hereditär (Jeder Induzierte Teilgraph ist ein Baum)
+- Jede monotone Eigenschaft ist hereditär, aber nicht unbedingt anders rum
 
-### Baum
-- weder Monoton noch hereditär
-  
-### Wälder 
+#### Monoton/Hereditär
+Da die Eigenschaft für (induzierte-)Teilgraphen gelten muss, kann man Kanten entfernen und schauen, ob die eigenschaft immer noch gilt 
+
+#### Baum
+- weder Monoton noch hereditär, da dieser in Wälder zerfällt, sobald man Kanten rausnimmt
+#### Wälder 
 - Menge von Bäumen
 - nicht zusammenhängender Kreisfreier Graph
 - Monoton und hereditär
 - Kanten entfernen erzeugt keine Kreise
 
-### Bipartit
+#### Bipartite Graphen
 - Monoton und hereditär
 - Gleiche Begründung wie Wald
 
 ### Co-Graphen 
+- Gegeben sind 2 Graphen G1(V1,E1), G2(V2,E2)
+- Die disjunkte Vereinigung von 2 Graphen ist gegeben durch $G1 \cup G2 = (V1 \cup V2 \cup E1 \cup E2)$
 - name kommt von komplement Graphen (veraltet)
 - Disjunkte Summe, müssen Disjunkte Graphen sein
 - Das Erstellen von Co-Graphen lässt sich als Baum darstellen
