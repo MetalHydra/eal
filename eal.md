@@ -1462,32 +1462,108 @@ Da die Eigenschaft für (induzierte-)Teilgraphen gelten muss, kann man Kanten en
 - name kommt von komplement Graphen (veraltet)
 - Disjunkte Summe, müssen Disjunkte Graphen sein
 - Das Erstellen von Co-Graphen lässt sich als Baum darstellen
-- 
-  
-  
-
-### Frage Ist ein Baum/Wald Monoton/Hereditär
-
-
-### Co-Graph 
+- sind P4 frei
+- Co-Graph, wenn er sich aus 3 Regeln aufbauen lässt
+1. Graph mit Genau 1nem Knoten ist ein CO-Graph
+2. DIsjunkte Vereinigung 2er Co-Graphen ist ein CO-Craph
+3. DIsjunkte Summe 2er Co-Graphen ist ein CO-Craph
+- Für 2 Co-Graphen G1 und G2 gilt: $G1 \times G2 = \bar{\bar{G1} \cup \bar{G2}}$
+- Aufbau des Co-Graphen kann als Baum dargestellt werden
+- Für Co-Graphen kann man in Zeit $O(\mathcal{V}+\mathcal{E})$ entscheiden, ob G ein Co Graph ist und im besten Fall den Co-Graph direkt mit angeben.
 - darf kein P4 enthalten weil Komplement von P4 = P4 ist
 - Wenn man Co-Baum hat, ist independent set,Färbung,Clique, etc effizient in O(V+E) zu lösen
 - Erkennungsalgorithmen, liefern Anhaltspunkt für die Lösung
 
-## Planare Graphen
-Planare Graphen, kann man so in eine Ebene Zeichnen, dass sich keine Kanten außer in den Knoten kreuzen
+### Erstellen des Co-Baumes
+- Sei G ein Co-Graph, Iteriere die folgenden Schritte, bis die Knoten nur noch aus einem Knoten bestehen
+  1. Falls G nicht zusammenhängend ist, dann sind $G_1,...,G_k$ seine zusammenhangskomponenten. Man Erstellt rekursiv den Co-Baum für jede Komponente $G_i$ und erstellt einene $\cup$-Knoten als vorgänger
+  2. Wenn Zusammenhangend, dann betrachte den Komplement Graphen und seine zusammenhangskomponenten $\bar{G_1},...,\bar{G_k}$, erstelle rekursiv den Co-Baum für jeden $G_i$ und erstelle $\times$-Knoten als Vorgänger
+
+### Schwere Probleme mit Co-Graphen lösen
+Schwere Probleme lassen sich, wenn man einen Co-Graphen hat, mithilfe von dynamischer Programmeirung lösen Gegeben ist ein Co-Graph G  und ein Co-Baum $T(V_T,E_T,w)$ mit Wuzel $w$ zu G
+- Für einen Knoten $v \in V_T$ ist $T_v$ ein Teilbaum mit Wurzel $v$ und $G[v]$ ist der durch $T_v$ definierte Co-Graph
+![](2022-12-30-14-15-26.png)
+![](2022-12-30-14-15-05.png)
+#### Clique
+- Für einen Co-Graphen G(V,E) kann $\omega(G) = \omega(G[w])$ einer maximalen Clique mit einem Bottom-Up durchlauf durch den Co-Baum $T$ ermittelt werden
+1. Für jedes Blatt $v$ in $T$ setzt man $\omega(G[v]) = 1$
+2. Jeden mit $\cup$ markeirten inneren Knoten $v$ mit den Kindern $v_1, v_2$ setzt man: $\omega(G[v]) = max \{\omega(G[v_1]),\omega(G[v_2])\}$
+3. Der Wert für jeden mit $\times$ markeirten Knoten wird mit :$\omega(G[v]) = \omega(G[v_1])+\omega(G[v_2])$  
+![Ergebnis](2022-12-30-14-13-34.png)*Ergebnis dür den Co-Baum 9.4*
+- $O(\mathcal{V}+\mathcal{E})$
+
+#### Independent Set (unabhängige Mengen)
+- Berechnung von $\alpha(G) = \alpha(G[w])$ per dynamischer Programmierung entlang des Co-Baums T
+1. Für jedes Blatt $v$ in $T$ setzt man $\alpha(G[v]) = 1$
+2. Jeden mit $\cup$ markeirten inneren Knoten $v$ mit den Kindern $v_1, v_2$ setzt man: $\alpha(G[v]) = \alpha(G[v_1]) + \alpha(G[v_2])$
+3. Der Wert für jeden mit $\times$ markeirten Knoten wird mit :$\alpha(G[v]) = \max \{\alpha(G[v_1]),\alpha(G[v_2])\}$ 
+![](2022-12-30-15-28-38.png)
+- $O(\mathcal{V}+\mathcal{E})$
+
+#### Partition in Cliquen
+- Berechnung von $\theta(G) = \theta(G[w])$ per dynamischer Programmierung entlang des Co-Baums T
+1. Für jedes Blatt $v$ in $T$ setzt man $\theta(G[v]) = 1$
+2. Jeden mit $\cup$ markeirten inneren Knoten $v$ mit den Kindern $v_1, v_2$ setzt man: $\theta(G[v]) = \theta(G[v_1]) + \theta(G[v_2])$
+3. Der Wert für jeden mit $\times$ markeirten Knoten wird mit :$\theta(G[v]) = \max \{\theta(G[v_1]),\theta(G[v_2])\}$ 
+
+Der Algorithmus ist Korrekt da Co-Graphen perfekt sind und deshalb $\alpha(G) = \theta(G)$ gilt
+- $O(\mathcal{V}+\mathcal{E})$
+
+#### Partition in unabhängige Mengen (Färbungszahl)
+- Für einen Co-Graphen G(V,E) kann die Färbungszahl $\mathcal{X}(G) = \mathcal{X}(G[w])$ e mit einem Bottom-Up durchlauf durch den Co-Baum $T$ ermitteln
+1. Für jedes Blatt $v$ in $T$ setzt man $\mathcal{X}(G[v]) = 1$
+2. Jeden mit $\cup$ markeirten inneren Knoten $v$ mit den Kindern $v_1, v_2$ setzt man: $\mathcal{X}(G[v]) = max \{\mathcal{X}(G[v_1]),\mathcal{X}(G[v_2])\}$
+3. Der Wert für jeden mit $\times$ markeirten Knoten wird mit :$\mathcal{X}(G[v]) = \mathcal{X}(G[v_1])+\mathcal{X}(G[v_2])$ 
+- Korrekt da Co-Graph perfekt ist und $\mathcal{X}(G) = \omega(G)$ gilt
+- $O(\mathcal{V}+\mathcal{E})$
+
+### Chordale Graphen
+Jeder Kreis mit $k \geq 4$ eine Sehne besitzt (Kante zwischen 2 Knoten auf dem Kreis die nicht auf dem Kreis liegt). Jeder induzierte Teilgraph ist ebenfalls Chordal.
+Chordale Graphen sind nicht monoton aber hereditär, da wenn man eine Kante entfernt die die Sehne ist, ist die Eigenschaft zerstört. Durch das hinzufügen eins Knotens und der inzidnenten Kanten kann keine neue Sehne entstehen.
+- Sei G=(V,E) und $u,v  \in V$, eine Knotenmenge $A \subset V - \{u,v\}$ heißt u-v trennend falls $u,v \in G$ aber nicht in $G-A$ durch einen Pfad verbunden sind.
+- Eine Knotenmenge $A \subset G$ heißt trennend, wenn es $u,v \in V$ ibt, sodass A u-v trennend ist
+- Die Menge der adjazenten Knoten eines Knotens u heißt Nachbarschaft $N_G := \{v | \{u,v\} \in E\}$
+- für $A \subseteq V$ schreibt man $N_G(A) := \Cup_{e \in A}N_G(u)$
+
+### Satz von Dirac
+Ein Graph ist Chordal, wenn jede minimal trennende Knotenmenge eine Clique induziert
+Ein Knoten heißt Simplizialknoten, wenn seine Nachbarschaft vollsändig verbunden ist (also eine Clique bildet)
+Jeder Chordale Graph besitzt einen Simlizialknoten und wenn der Graph nicht vollständig ist, besitzt  er sogar 2 nicht benachbarte Simplizialknoten
+
+### Perfektes Knoten Eleminationsschema
+Jeder Chordale Graph besitzt solch ein Schema. 
+Das Eleminationsschema ist eine Aufzählung $\sigma$, sodas jeder Knoten $v \in V$ simplizial in $G[\{u \in V | \sigma(u) > \sigma(v) ist\}]$. SOlch ein Schema kann mit lexikografischer Breitensuchen (Normale Breitensuche mit zusätzlicher Kollisionsregel)
+
+### Vergleichbarkeitsgraphen
+Ein Gerichteter Graph G(V,E) heißt transitiv wenn für 3 Knoten $u,v,w \in V $gilt, $(u,v) \in E, (v,w) \in E -> (u,w) \in E$. Ein ungerichteter Graph heißt Vergleichbarkeitsgraph (comparability graph), wenn eine Orientierung der Kanten existiert, sodass der Orientierte Graph transitiv ist
+### Planare Graphen
+Planare Graphen, kann man so in eine Ebene Zeichnen, dass sich keine Kanten außer in den Knoten kreuzen (Ist krezungsfrei in einer Ebene Zeichbar).
+$K_n$: ist vollständiger Graph mit n Knoten
+$K_{n,m}$; Ist vollständiger Bipartiter Graph mit $G(V,E)$ mit $V=A \cup B, E = \{ \{u,v\} | u \in A, v \in B  \}, A \cap B = \emptyset, |A| = n, |B|=m$
+PLanare Graphen sind dünne Graphen: $\mathcal{E} \in O(\mathcal{V})$
+
+### wichtige nicht-planare Graphen
+Diese sind für den planaritätstest wichtig
+![](2022-12-30-17-45-45.png)
 ### Eulersche Polyeder Formel
-Anzahl der Knoten - Anzhal der Kanten + außerere Flächen (f for faces) = 2 
+Anzahl der Knoten - Anzhal der Kanten + außerere Flächen (f for faces) = 2 ($\mathcal{V} - \mathcal{E} + f = 2$) 
 einfache Graphen = Keine Parallelen Kanten
-Baum ist planar
-Wenn man Kanten aus Kreis entfernt, verschwinden Flächen
-E und F wird kleiner (deshalb gilt Beziehung)
-- Eine Kanten kann maximal 2 Flächen Begrenzen
-- Jede Fläche ist durch mindestens 3 Kanten begrenzt
-- PLanare Graphen sind dünne Graphen
-- Der vollständige Graph mit 5 Knoten ist kein planarer Graph
+Baum ist planar, für diese gitb $\mathcal{E} = \mathcal{V}-1, f=1$
+Wenn man Kanten aus Kreis entfernt, verschwinden Flächen und  $\mathcal{E}$ unf $f$ wird jeweils um 1 kleiner (deshalb gilt Beziehung)
+
+#### Korollare
+- Korollar 1 (gilt nur für einfache Graphen) Für einen planaren Graphen gilt: $\mathcal{E} \leq 3 \cdot \mathcal{V} - 6$
+Beweisidee:
+Eine Kante kann maximal 2 Flächen Begrenzen,p Kanten können deshalb nur 2p Flächen begrenzen. Jede Fläche ist durch mindestens 3 Kanten begrenzt. 
+$f \leq \frac{2\cdot \mathcal{E}}{3}$ -> nach Polyeder Formel folgt $§ \cdot \mathcal{V}-3 \cdot \mathcal{E}+3 \cdot f$ -> umstellen gibt Korollar
+
+- Korolar 2: Für einen Bipartiten einfachen, planaren Graphen gilt: $\mathcal{E} \leq 2 \cdot \mathcal{V}-4$
 - Jeder Knoten ist mit 4 anderen Knoten verbunden
-- Bei Bipartiten planaren Graphen gibt es keine Kreise der Länge 3 gibt, deshalb gibt es 4 Kanten die Flächen begrenzen
+- Bei Bipartiten planaren Graphen gibt es keine Kreise der Länge 3 gibt,sondern nur weöche mit gerader Länge, deshalb gibt es 4 Kanten die Flächen begrenzen, dann gilt: $4 \cdot f \leq 2 \cdot \mathcal{E}$
+
+- K5 ist nicht planar, da jede Kante doppelt gezälht wird muss es $\frac{4\cdot 5}{2}=10$ Kanten geben: Nach Korollar 1 darf es aber nur 9 geben -> 1 Kante zuviel
+- Jeder planare Graph besitzt einen Knoten, der höchstens grad 5 hat, man zeigt, dass wenn man 6 Knoten nimmt, Korollar 1 verletzt ist
+- $K_{3,3}$ ist nicht planar, da es $\frac{6 \cdot 3}{2}=9$ Kanten gibt, nach Korollar 2 dürfte es nur 8 geben.
 
 ### Ist jeder (induzierte Teilgraph) eines planaren Graphen planar?
 - Eigenschaft ist Monoton
@@ -1495,26 +1571,60 @@ E und F wird kleiner (deshalb gilt Beziehung)
 - Blüten bei dem Matching
 - Unterteilungsgraphen -> Kante in Graph wird durch weg ersetzt (neue Knoten nehmen)
 
-### Ist der Peterson Graph planar
-- V=5 E=10 f=12
-- man kann Kanten kontrahieren, dass K5 oder K3,3 Dabei rauskommt
+### Wie testet man die Planarität von Graphen?
+Graphen die durch entfernen von Kanten oder Knoten oder durhc Kantenkontraktion entstehen, heißen Graph-Minor
+### Satz von Wagner
+Ein Graph ist dann planar, wenn er weder den K5,oder den $K_{3,3}$ als Minor enthält
+### Satz von Kuratowski
+Ein Graph H ist eine Unterteilung von G, wenn H aus G entsteht, indem Kanten von G durch einfache Wege  über neu eingefügte Kanten ersetzt werden.
+Alle neu eingefügten Knoten haben den grad 2. Ein Teilgrapgh $G'$ ist ein Kuratowski-Teilgraph, wenn $G'$ eine Unterteilung des $K_5$ oder $K_{3,3}$ ist.
+Jeder einfache Graph ist dann planar, wenn er keinen Kuratowski-Teilgraphen enthält
 
-- Jeder Planare Graph ist 6 und 5 Färbbar
--3Färbung für planare Graphen ist NP-vollständig
+### Ist der Peterson Graph planar?
+Nein, da dieser K5 enthält als Minor enthält. Man kann Kanten kontrahieren, dass K5 oder K3,3 Dabei rauskommt
+Jeder Planare Graph ist 6 und 5 Färbbar
+3Färbung für planare Graphen ist NP-vollständig
 
-### Planare Graphen
-- nicht besonders spannend
-- nur wegen Fehler in Beweis berühmt
-Es gibt haufenweise Graphklassen die alle mehr oder weniger Relevant sind (Intervalgraphen)
-- Außen-planar
-- Knoten auf Kreis zeichnen, Kanten liegen innerhalb
+### Planaritätstest
+Dieser ergibt sich aus dem Satz von Kuratowski. Man kontrahiert Kanten die zu einem grad 2 inzidnet sind und überprüft im Kontrahierten Graphen alle 5 bzw 6. Elementigen Teilmengen, darauf ob diese $K_5, K_{3,3}$ enthalten.
+Polynomielle aber nicht effiziente Laufzeit, besserer Path-Addition-Algorithmus von Hopcroft, Tarjan.
 
-# Vorrangwarteschlangen
+### 6-Färbbarkeit von planaren Graphen
+Jeder planare Graph kann mit 6 Farben gefärbt werden. Der höchste Knotengrad eines Knotens $v$ kann höchstens 5 Betragen. Man Berechnet eine Färbung für $G-\{v\}$ mit 6 Farben. Danach fügt man Knoten v wieder ein und hat noch eine Farbe für diesen frei, da v höchstens 5 Nachbarn hat.
+
+### 5-Färbbarkeit von planaren Graphen
+Unterteilung in 2 Fälle:
+1. Alle Knoten haben max. den Grad 4, dann ist der Beweis wie bei der 6-Färbbarkeit 
+2. Mann nimmt wieder v raus und guckt sich den induzierten Teilgraphen paare von Knoten an, wenn die Knoten über Kante im selben Graphen verbunden sind gucke nachstes paar an, wenn die Punkte in  verschiedenen Komponenten liegen, färbe eine Komponente wie die andere, dadurhc wird eine Farbe für v frei. Füge dann v mit dieser Farbe ein 
+
+### 4-Färbbarkeit von planaren Graphen
+- Formuliert von Auguste de Morgan
+- Fehler im Beweis machte Planare Graphen bekannt
+
+### 3-Färbbarkeit ist NP-vollständig
+Nichtdeterministisch wird eine zuordnung für G besitmmt und anschließend geprüft ob $f(u) \neq f(v) \forall \{u,v\} \in E$
+- $3-Knotenfärbung \leq_P 3-planar-Knotenfärbung$
+Dafür benötigt man eine Einbettung in die Ebene, sodass sich höchstens 2 Kanten schneiden, Krezungen werden dann durch einen Speziellen Graphen ersetzt.
+![](2022-12-30-20-30-06.png)
+![](2022-12-30-20-30-20.png)
+Bei mehreren Kreuzungen müssen die Graphen speziell verkettet werden
+![](2022-12-30-20-31-20.png)*Der Graph ist planar und 3 Färbbar*
+Nach jeder Färbung haben Gegenüberliegende Knoten die selbe Farbe, welche zu einer Färbung aller Knoten erweitert werden kann
+![](2022-12-30-20-34-42.png)
+
+### ! Planare Graphen (Anmerkungen)
+nicht besonders spannend, nur wegen Fehler in Beweis berühmt.
+Es gibt haufenweise Graphklassen die alle mehr oder weniger Relevant sind (Intervalgraphen). 
+Außen-planar, Knoten auf Kreis zeichnen, Kanten liegen innerhalb
+
+# Vorrangwarteschlangen (Priority-Queues)
+Priority-Queues werden benötigt, für Dijkstra, Prim, Kruskal (anstatt Kanten zu sortieren)
 Wie implementiert man die Algorithmen vernünftig?
-- Man hat Operationen wie Extract min und Decreasekey
+Man hat Operationen wie Extract min und Decreasekey
 - Verbinde Liste mit Binärheap, sodass sich bessere Laufzeiten ergeben
 - Laufzeit ist nur O(Log n) O(n) ist falsch
 
+### Wichtige Operationen von Priority-Queues
 
 # Amortisierte Laufzeitanalyse
 - Aggregat-Methode
