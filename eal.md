@@ -1625,7 +1625,36 @@ Man hat Operationen wie Extract min und Decreasekey
 - Laufzeit ist nur O(Log n) O(n) ist falsch
 
 ### Wichtige Operationen von Priority-Queues
+1. MakeHeap(): Neuen Heap ohne Elemente erzeugen
+2. Insert(H,x) fügt Knoten x in Heap H ein
+3. Minimum(H): Zeiger auf minimales Element in Heap
+4. ExtractMin(H): Entfernt das minimale Elemnt aus dem Heap
+5. Union(H1,H2): Neuen Heap mit den Elementen aus H1 und H2 enthält
+6. DecreaseKey(H,x,k): weist Knoten x in Heap einen neuen kleineren Wert k zu
+7. Delete(H,x): entfernt Knoten x aus Heap H
 
+### Linksbäume
+Ein Baum mit $N+1$ Blättern und N inneren Knoten ist balanciert, wenn jedes Blatt eine Tiefe aus $O(log(N))$ hat. Binäre links-rechtsgeordnete Bäume die in ihren Knoten Elemente mit Schlüsseln speichern. 
+#### Eigenschaften
+1.Min-Heap
+2. Jeder Knoten besitzt ein Distanzwert: 
+2.2. Distanzblätter ist 0
+2.3. Innere: Distanzwert Rechtes Kind + 1
+2.4. Rechtes Kind $\leq$ Distanzwert linkes Kind
+Das Rechteste Blatt hat höchstens eine Tiefe $O(log(N))$
+
+#### Operationen
+1. MakeHeap() = $O(1)$: Ein Knoten mit Distanzwert 0 erzeugen
+2. MInimum(D) = $O(1)$: gibt die Wurzel zurück
+Alle anderen Operationen bestehen aus verschmelzen von 2 Linksbäumen
+3. Insert(H,x) = $O(log()N)$ einen Linksbaum mit nur einem Knoten x mit distanz 1 erzeugen+
+4. ExtractMin(D) = $O(log(N))$ entferne Wurzel und verschmelze die Teilbäume
+5. Delete(D,x) = $O(log(N))$, der Linksbaum zerfällt beim entfernen x in den oberhalb von x liegenden Teilbaum und in den linken und Rechten Teilbaum. Ersetze den Knoten x durch ein Blatt b. ![](2023-01-01-15-20-52.png)
+6. DecreaseKey(D,x,k) = $O(log(N))$, Delete(D,x), Ändere Schlüssel von x auf k, Insert(D,x).![](2023-01-01-15-27-27.png)
+
+### Binomial-Heaps
+heap geordnete Bäume, die in allen Knoten Elemente mit schlüsseln speichern.
+Der Binomialbaum vom Type $B_0$ besteht aus genau einem Knoten. $B_{i+1}, i \geq 0$ besteht aus 2 Kopien der Binomialbäume vom Typ $B_i$, indem man die Wurzel der einem Kopie zu einem Kind der Wurzel der anderen Kopie macht.
 # Amortisierte Laufzeitanalyse
 - Aggregat-Methode
 - Worst-Case Laufzeit
