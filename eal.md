@@ -1533,6 +1533,8 @@ Jeder Chordale Graph besitzt einen Simlizialknoten und wenn der Graph nicht voll
 ### Perfektes Knoten Eleminationsschema
 Jeder Chordale Graph besitzt solch ein Schema. 
 Das Eleminationsschema ist eine Aufzählung $\sigma$, sodas jeder Knoten $v \in V$ simplizial in $G[\{u \in V | \sigma(u) > \sigma(v) ist\}]$. SOlch ein Schema kann mit lexikografischer Breitensuchen (Normale Breitensuche mit zusätzlicher Kollisionsregel)
+Wenn nachbarn Clique bilden, sind Knoten mit dem Neachbarn eine Clique um 1 größer
+PES: Knoten auf gerade angeordnet, Man guckt sich für jede Position nach rechts hin an links ist egal. Man kann sich so ein Schema aufbauen, fall, indem man den Simplizialknoten rausnimmt (mit Kanten), dann ist der der Graph wieder ein Chordaler Graph ist, usw.
 
 ### Vergleichbarkeitsgraphen
 Ein Gerichteter Graph G(V,E) heißt transitiv wenn für 3 Knoten $u,v,w \in V $gilt, $(u,v) \in E, (v,w) \in E -> (u,w) \in E$. Ein ungerichteter Graph heißt Vergleichbarkeitsgraph (comparability graph), wenn eine Orientierung der Kanten existiert, sodass der Orientierte Graph transitiv ist
@@ -1655,6 +1657,7 @@ Alle anderen Operationen bestehen aus verschmelzen von 2 Linksbäumen
 ### Binomial-Heaps
 heap geordnete Bäume, die in allen Knoten Elemente mit schlüsseln speichern.
 Der Binomialbaum vom Type $B_0$ besteht aus genau einem Knoten. $B_{i+1}, i \geq 0$ besteht aus 2 Kopien der Binomialbäume vom Typ $B_i$, indem man die Wurzel der einem Kopie zu einem Kind der Wurzel der anderen Kopie macht.
+Es kann keine Binomialbäume mit gleichem Rang geben. 
 # Amortisierte Laufzeitanalyse
 - Aggregat-Methode
 - Worst-Case Laufzeit
