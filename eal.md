@@ -1659,9 +1659,11 @@ heap geordnete Bäume, die in allen Knoten Elemente mit schlüsseln speichern.
 Der Binomialbaum vom Type $B_0$ besteht aus genau einem Knoten. $B_{i+1}, i \geq 0$ besteht aus 2 Kopien der Binomialbäume vom Typ $B_i$, indem man die Wurzel der einem Kopie zu einem Kind der Wurzel der anderen Kopie macht.
 Es kann keine Binomialbäume mit gleichem Rang geben. 
 2 Binomialbäume gleichen Ranges werden verschmolzen zu einem mit Rang + 1
+![](2023-01-04-14-11-32.png)
 Auf Ebene $i$ hat ein Binomialbaum $k \choose{i}$, ein Baum mit höhe $k$ hat $2^k$ Knoten. Weiter ist die Anzhal der Bäume die Anzahl an 1sen die benötigt werden, um die Anzahl in Binär darzustellen. Die Wurzeln der Bäume sind in Verketteter Liste
 - Make-Heap Operation $\Theta(1)$ leere Wurzelliste erzeugen
 - Minimum(x): $\Theta(n)$ Wurzelliste durchsuchen.
+![](2023-01-04-14-34-21.png)
 
 #### Union
 - Union(H1,H2): $\Theta(log(n+m))$n,m sind Anzahl der Knoten in den Bäumen
