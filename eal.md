@@ -1658,6 +1658,35 @@ Alle anderen Operationen bestehen aus verschmelzen von 2 Linksbäumen
 heap geordnete Bäume, die in allen Knoten Elemente mit schlüsseln speichern.
 Der Binomialbaum vom Type $B_0$ besteht aus genau einem Knoten. $B_{i+1}, i \geq 0$ besteht aus 2 Kopien der Binomialbäume vom Typ $B_i$, indem man die Wurzel der einem Kopie zu einem Kind der Wurzel der anderen Kopie macht.
 Es kann keine Binomialbäume mit gleichem Rang geben. 
+2 Binomialbäume gleichen Ranges werden verschmolzen zu einem mit Rang + 1
+Auf Ebene $i$ hat ein Binomialbaum $k \choose{i}$, ein Baum mit höhe $k$ hat $2^k$ Knoten. Weiter ist die Anzhal der Bäume die Anzahl an 1sen die benötigt werden, um die Anzahl in Binär darzustellen. Die Wurzeln der Bäume sind in Verketteter Liste
+- Make-Heap Operation $\Theta(1)$ leere Wurzelliste erzeugen
+- Minimum(x): $\Theta(n)$ Wurzelliste durchsuchen.
+
+#### Union
+- Union(H1,H2): $\Theta(log(n+m))$n,m sind Anzahl der Knoten in den Bäumen
+- Es werden immer 2 Bäume gleichen Ranges verscholzen indem der eine Baum als Kind unter den anderen gehängt wird.
+
+#### Insert
+- Insert(H1,x) Element ist ein einzelner Wurzelknoten -> verschmelze diese $\Theta(log(n))$
+
+### Fibbonacci-Heaps
+Die Operationen Decreasekey, exractMin und Delete sind noch zu schlecht.
+
+# Suchbäume
+links-Rechts geordnete Binäre Bäume. Die Schlüssel im Linken Teilbaum enthalten dabei die Werte die kleiner als der Schlüssel von x ist, und rechts stehen die , die größer als dieser Wert sind.
+Die folgenden Operationen, werden von Suchbäumen unterstützt.
+1. Insert
+2. Delete
+3. Search
+4. Minimum/Maximum
+5. predecessor, successor
+
+#### Finden
+
+#### Einfügen
+#### Löschen
+
 # Amortisierte Laufzeitanalyse
 - Aggregat-Methode
 - Worst-Case Laufzeit
