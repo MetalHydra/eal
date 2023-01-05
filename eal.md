@@ -1667,13 +1667,54 @@ Auf Ebene $i$ hat ein Binomialbaum $k \choose{i}$, ein Baum mit höhe $k$ hat $2
 
 #### Union
 - Union(H1,H2): $\Theta(log(n+m))$n,m sind Anzahl der Knoten in den Bäumen
-- Es werden immer 2 Bäume gleichen Ranges verscholzen indem der eine Baum als Kind unter den anderen gehängt wird.
+- Es werden immer 2 Bäume gleichen Ranges verscholzen indem der eine Baum als Kind unter den anderen gehängt wird. Wenn das Ergebnis ein Heap ist, der bereits vorhanden ist, sorge dafür, dass jede größe 1mal vorkommt. z.B Merge 2 Heaps mit Grad 1 -> Heap mit grad 2, falls ein Heap mit Gead 2 bereits vorhanden ist, Merge beide Heaps mit Grad 2. (sonsolidate(H1,H2)).
+- Immer in der Reihenfolge der Grade (kleinster nach größter Grad).
 
 #### Insert
 - Insert(H1,x) Element ist ein einzelner Wurzelknoten -> verschmelze diese $\Theta(log(n))$
+- Diese Operation enspricht quasi die Addition einer Zahl mit 1 im Binärsystem.
+
+#### DeleteMin/ExtractMin
+- Man sucht nach der kleinsten Wurzel im Wald und entfernt diese ($\Theta(log(n))$), dadurch sind die Kinder kein Heap mehr. Man macht daraus dann wieder ein neuen Heap und vereint diese.
+
+#### DecreaseKey
+- Man ändert den Wert und tauscht dann solange nach oben, bis Heap bedingung wieder erfüllt ist $\Theta(log(n))$ = einmal im Baum hoch.
+
+#### Delete
+- zuerst DecreaseKey des Knoten mit -unendlich und dann extract min: (Man erzwingt dass das zu löschende Element das kleinste ist). $\Theta(log(n))$.
+
 
 ### Fibbonacci-Heaps
 Die Operationen Decreasekey, exractMin und Delete sind noch zu schlecht.
+Sammlung an Bäumen die die Heap bedingung erfüllen,
+Fibbonacci Heaps verknüpfen die Wurzelelemente und die Kinder untereinander als zyklisch verkettete Liste. Beim Löschen und Einfügen werden keine Bäume vereinigt. Die vereinigung erfolgt nach extractMin Schritt.
+
+#### Implementierungsdetails
+Jeder Knoten hat einen Rang = Anzahl der Kinder (für extractMin wegen der sortierung) und Markierung (für decreaseKey).
+
+#### Union
+Wie Insert, Knoten in Wurzelliste einhängen -> $\Theta(1)$.
+
+#### Insert
+Die Insert Operation fügt die Zahl einfach nur in die Wurzelliste und Verknüpft den Knoten per Union $\Theta(1)$.
+Problem ist irgendwann wird Wurzelliste zu lang um effektiv minimum z finden. 
+
+Beispiel: Nach 100 mal Einfügen dauert die nächste ExtractMin Operation lange, durch das Aufräumen aber geht die nächste ExtractMin Operation wieder schneller.
+
+#### ExtractMin
+Man Speichert Referenz auf minimum Element in Wurzelliste -> $\Theta(1)$.
+Jeder an dem Minimum hängende Teil wird entfernt und in die Wurzelliste eingefügt. Danach wird aufgeräumt. Dazu werden die Bäume miteinander verschmolzen die den gleichen Rang haben, dies wird solange gemacht bis Alle Bäume unterschiedlichen Rang haben. Wenn alle Bäume vereint sind, Baue den Heap neu (Benutze Array zum Zählen). Laufzeit hängt vom Maximalen Grad und der Anzahl der Bäume ab, $O(n)$ im Worst-case, Amortisiert aber nur $O(log(n))$, da Binomialbäume enthalten sind -> $deg(d) = 2^d$ Knoten -> $log_d(n)$ für n Knoten.
+
+#### DecreaseKey
+Falls der geänderte Wert die Heapbedingung nicht verletzt muss nichts gemacht werden, sonst wird der Teil ausgeschnitten und in die Wurzelliste eingefügt. $O(1)$.
+Es darf maximal 1 Kind von einem Knoten abgeschnitten werden.
+Der Vorgänger wird dann markiert um anzugeben, dass er ein Kind verloren hat.
+Wenn von diesem Knoten dann nochmal was abgeschnitten wird, weiß man dass zum 2. mal was abgeschnitten worden ist und man schneidet, dann wird der markierte Knoten ebenfalls abgeschnitten und die Markierung entfernt.
+
+!Anmerkung bei 10 DecreaseKey aufrufen werden maximal 20 Knoten abgeschnitten (k <= 2k) 10 regulär + 10mal markierung. v:$O(1)$ sonst $O(n)$ im worst case.
+
+#### Delete 
+DecreaseKey auf -unendlich setzen und extractMin ausführen. (Wie beim Binomialheap).
 
 # Suchbäume
 links-Rechts geordnete Binäre Bäume. Die Schlüssel im Linken Teilbaum enthalten dabei die Werte die kleiner als der Schlüssel von x ist, und rechts stehen die , die größer als dieser Wert sind.
