@@ -1716,6 +1716,8 @@ Wenn von diesem Knoten dann nochmal was abgeschnitten wird, weiß man dass zum 2
 #### Delete 
 DecreaseKey auf -unendlich setzen und extractMin ausführen. (Wie beim Binomialheap).
 
+![](2023-01-05-12-35-29.png)
+
 # Suchbäume
 links-Rechts geordnete Binäre Bäume. Die Schlüssel im Linken Teilbaum enthalten dabei die Werte die kleiner als der Schlüssel von x ist, und rechts stehen die , die größer als dieser Wert sind.
 Die folgenden Operationen, werden von Suchbäumen unterstützt.
@@ -1724,12 +1726,92 @@ Die folgenden Operationen, werden von Suchbäumen unterstützt.
 3. Search
 4. Minimum/Maximum
 5. predecessor, successor
+Es existieren verschiedene Durchlaufordnungen, inorder, preorder, postorder
 
-#### Finden
+#### Durchlaufordnungen
+1. Pre-Order: erst aktuellen Knoten ausgeben,dann linken Teilbaum rekursiv durchlaufen und dann den rechten
+2. In-Order: erst linken Teilbau mrekursiv durchlaufen, dann Knoten ausgeben und dann den rechten durchlaufen
+3. Post-ORder: Erst linkten Knoten rekrusiv durchlaufen, dann rechten, dann ausgben
+4. Level-Order: Alle Knoten auf einer höhe nacheinander asugeben.
+#### Suchen (Find)
+Gegeben ist ein Suchbaum T, gesucht wird ein Knoten k mit Wert x.
+Rekursiver Aufruf entweder mit dem Linken oder dem Rechten Knoten, je nach Wert.
+![](2023-01-05-12-41-10.png)
+
+#### Minimum/Maximum bestimmen
+Es reicht den Baum durchzulaufen, das minimum gefindet sich ganz unten links und das maximum ganz unten rechts
+
+#### Vorgänger/Nachfolger Bestimmen
+Gegeben ist wieder ein Suchbaum T und ein Schlüssel k und gesucht wird der Knoten mit dem nächst kleineren/größeren Knoten. (Annahme keine mehrfachen Schlüssel)
+1. Finde Knoten x mit Schlüssel k.
+2. Wenn es für diesen Knoten einen linken Teilbaum gibt, dann nehme das Maximum davon.
+3. Sonst laufe weg zur Wurzel und Suche den kleinsten Vorgänger
+4. Wenn x nicht existiert, dann ist x mit Schlüssel k der kleinste Wert und hat keinen Vorgänger
+
+Der Nachfolger funktioniert genauso, aber anstatt das maximum im linken Baum zu suchen, sucht man das minimum im Rechten Teilbaum.
+![](2023-01-05-12-54-37.png)
 
 #### Einfügen
+Mehrere Fälle abfragen
+1. Rekrusiv linken Teilbaum durchlaufen (<)
+2. Rekrusiv rechten Teilbaum durchlaufen (>)
+3. Duplikate handlen (=, meistens nicht einfügen)
+4. Wenn null Node gefunden wird, neuen Knoten einfügen.
+![](2023-01-05-13-01-50.png)
+Im worst-case wird sortierte Liste eingefügt, dann hat man ein degenrierten Baum $T(n)=\Sigma_{i=1}^n i \in Theta(n^2)$
+Einfügen von Zufälligen Werten deutlich schneller, soviele Vergleiche wie der gesuchte Knoten von der Wurzel weg sit: interne Weglänge = $\Sigma_v d(x,r)$(von Knoten x zu Wurzel root)
+- Interne Pfadlänge / N (Knoten im Baum) = durchschnittliche Anzahl an Verglecihen.
+- $C_1 = 1$
+- $C_N = N - 1 + 1/N \Sigma_{1\leq k \leq N} (C_{k-1}+ C_{N-k})$ analog zu Quicksort gilt $C_N \in \Theta(N log(N)) $/N = $\Theta(log(N))$
+ 
 #### Löschen
+Nutze Find um zu löschendes Element zu finden, Man unterscheidet 3 Fälle.
+1. Das zu löschende Element ist ein Blatt -> kann sofort gelöscht werden
+2. Der zu löschende Knoten hat nur ein Kind -> ersetze Knoten mit Kind
+3. Der zu löschende Knoten hat 2 Kinder -> Man sucht den direkten Nachfolger im Rechten Teilbaum und kopiert den an die stelle des zu löschenden Elementes, anschließend löscht man das übrige Element
+  
+### Blattsuchbäume
+Knoten enthalten nur den maximalen Wert des Linken Teilbaumes als wegweiser, die Werte stehen ausschließlihc in den Blättern, welche untereinander doppelt verkettet sind.
+Dadruch lassen sich auf einfach Bereichsanfragen beantworten
 
+### AVL-Bäume
+Teilklasse von Binären Suchbäumen, Ziel ist es eine logarithmische beschränkte Laufzeit für das Suchen, Einfügen und Löschen von Elementen: Dafür muss man die höhe auf $O(log n)$ beschränkt werden. Suchbäume bezeichnet man als höhenbalanciert, wenn für jeden inneren Knoten gilt, dass sich die höhe des linken und rechten Teilbaums höchstens um 1 unterscheiedt. Es gibt ein Balance Wert der sich aus der höhe des Rechten Teilbaums - höhe linker Teilbaum zusammensetzt, solange dieser an jedem inneren Knoten 0,1,-1 Beträgt ist der Baum ein AVL Baum. (Braucht man für die Rotation)
+- Es gilt für höhe h = 0: minimale Knotenanzahl ist 1
+- Es gilt für höhe h = 1: minimale Knotenanzahl ist 2
+- Baum mit h = 2 mit minimalen Knoten erhält man, wenn man h = 0 und h = 1 mit minimalen Knoten zusammenfügt. Damit die höhe von AVL-Bäumen ausgeglichen ist wendet man Rotationen an.
+![](2023-01-05-14-52-33.png)
+Die Rotationen funktionierne in Konstanter Zeit, da Zeiger nur umgebogen werden müssen.
+Nach den Rotationen müssen die Balance Werte neu berechnet werden,
+
+### Rot-Schwarz Bäume
+Balanciermethoden basierend auf Knotenfärbung,man Färbt Knoten um, wenn die Eigenschaft verletzt ist, die codierung in 1Bit möglich. Die Blätter eines Rot-Schwarz Baumes sind Nil Knoten. Jeder Knoten ist entweder Rot oder Schwarz. Man möchte nicht viele Rote sondern mehr Schwarze Knoten. Wurzel und Blätter müssen schwarz sein. Die Kinder eines roten Knotens sind schwarz. Alle Wurzel-Blatt Pfade haben die gleiche Anzahl an schwarzen Knoten. Höhe des Baumes längste Pfade: Der längste Pfad ist höchstens doppelt so lang wie der kürzeste. 
+- Die höhe eines Rot-Schwarz Baumes mit n inneren Knoten hat höchstens eine höhe von $h \leq 2 \cdot log_2(n+1)$. Das zeigt man indem man den Rot-Schwarz Baum aus 2-3-4 Baum aufschreibt, jeder Rote Knoten wird an die Schwarzen Eltern verscmolzen.
+- Schwarz folgt auf Schwarz = 2er Knoten
+- 1 Rot folgt auf Schwarz = 3er Knoten
+- 2 Rot folgt auf Schwarz = 4er Knoten
+Der neue Baum hat eine höhe von $h' \geq h/2$, da auf jedem Pfad jeder 2. Knoten rot ist. Anders ausgedrückt: Der längste Blattpfad ist höchstens doppelt so lang wie der kürzeste. Ein voller Baum wäre $\Theta(log(n))$, wenn die Pfade um Faktor 2 unterschiedlich sind dann $\Theta(2 log(n))$ = $\Theta(log(n))$.
+![](2023-01-06-17-59-57.png)
+#### Insert
+Färbe einzufügenden Knoten zu Anfang immer rot (verhindert dass Eigenschaft mit gleichvielen Schwarzen Knoten auf einem Pfad nicht verletzt wird).
+Falls die Eiganschafften verletzt werden, werden diese mit Rotationen korrigiert.
+Man Unterscheidet mehrere Fälle:
+![](2023-01-06-18-22-13.png)
+![](2023-01-06-18-22-30.png)
+![](2023-01-06-18-22-50.png)
+### B-Bäume
+Sind keine Binären Bäume. Ein B Baum der Ordnung 4 ist der 2-3-4 Baum. Alle Blätter liegen auf einer Tiefe. In einem nicht leeren Baum gibt es mindestens 2 Kinder von der Wurzel.  Alle Blätter liegen auf einer Tiefe. Anzahl der Knoten $\lceil m/2 \rceil$. Jeder innere Knoten hat höchstens $m$ Kinder, ein Knoten mit k Kindern speichert $k-1$Schlüsselwerte. Schlüsselwerte in den Blättern sind aufsteigend sortiert.
+
+- Minimale Blattanzahl für B-Baum mit Ordnung m und höhe h: $N_{min} = 2 \cdot \lceil m/2 \rceil^{h-1}$
+- Maximale Blattanzahl: $N_{max} = m^h$ -> $N_{min} \leq n + 1 \leq N_{max}$ Einsetzen von Nmin und Nmax Ergibt $log_m(n+1) \leq h$, also balanciert.
+B+-Bäume sind erweiterung, die Blätter werden zu einer Liste verkettet und Werte nur in den Blättern gespeichert, innerere Knoten enthalten nur Hinweise wo Wert zu finden ist.
+#### Anmerkung
+Die Odrnung eines Suchbaumes ist die minimale Anzahl von Einträgen in einem Knoten.
+
+### Splay Bäume
+Selbststrukturierende Bäume, jeder Wert auf den Zugegriffen wird, wird per Umstrukturierung zur Wurzel hin Bewegt, während seltene Werte weiter hinab gebracht werden. Sie sind Speichereffizient und leicht zu implementieren
+
+#### Splay Operation Splay(T,x)
+Die Splay-Operation auf ein Element x sorgt dafür, dass dieses in der Wurzel steht
 # Amortisierte Laufzeitanalyse
 - Aggregat-Methode
 - Worst-Case Laufzeit
