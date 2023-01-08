@@ -1811,21 +1811,108 @@ Die Odrnung eines Suchbaumes ist die minimale Anzahl von Einträgen in einem Kno
 Selbststrukturierende Bäume, jeder Wert auf den Zugegriffen wird, wird per Umstrukturierung zur Wurzel hin Bewegt, während seltene Werte weiter hinab gebracht werden. Sie sind Speichereffizient und leicht zu implementieren
 
 #### Splay Operation Splay(T,x)
-Die Splay-Operation auf ein Element x sorgt dafür, dass dieses in der Wurzel steht
+Die Splay-Operation auf ein Element x sorgt dafür, dass dieses in der Wurzel steht. 
+DIes wird durch zig, zig-zig und zig-zag rotationen gemacht.
+Es gibt 3 Fälle:
+1. p ist linker oder rechter Nachfolger der Wurzel (zig):
+![](2023-01-07-11-13-39.png)
+2. p ist linker oder rechter Nachfolger ines Knotens dessen Vorgänger ebenfalls linker oder rechter Vorgänger der Wurzel ist (zig-zig):
+3. p ist linker oder rechter Nachfolger ines Knotens dessen Vorgänger ebenfalls rechter oder linker Vorgänger der Wurzel ist (zig-zag):
+
+#### Suchen
+- Führe Splay OPeration aus und x an der Wurzel gesucht.
+#### Einfügen
+Rufe die Splay Funktion auf und füge x als Wurzel ein. 
+![](2023-01-07-11-04-49.png)
+![](2023-01-07-11-05-01.png)
+
+#### Entfernen
+Rufe Splay(T,x) auf ist x in der Wurzel und L und R sind der Linke und Rechte Teilbaum.
+Rufe dann splay(L,$\inf$) auf -> L hat größten Schlüssel an der Wurzel und der Rechte Teilbaum leer ist. Füge dann R als Rechten Teilbaum in L ein.
+
+### Tries 
+Verzweigungen anhand von Buchstaben durchführen. Auf den Pfaden bis zu den Blättern stehen dann Wörter. Um ein Wort zu finden, muss man Buchstabe für Buchstabe von der Wurzel aus Verweigen. Falls eine Verzweigung nicht existiert, ist der Wert auch nicht gespeichert. Die höhe des Baumes entspricht dem längsten abgespeicherten Wert $w=w_1w_2...w_n$. Schlechte Speicherplatznutzung aufgrund einmaliger Verzweigungen und Dünn besetzter Knoten. Bessere Umsetzung als Binärer Baum oder mittels Hashing.
+#### Einfügen
+1. Beginne an der Wurzel
+2. Betrachte das Zeichen $w_i$ an Ebene i, falls das Zeichen noch kein Kind ist, erzeuge ein Kind mit diesem Namen, sonst gehe von diesem Kind eine Ebene weiter.
+
+#### Tries als Binärer Baum
+In jedem Knoten werden 2 Verweise gespeichert, einem zum Kind und ein Verweis zum Geschwister. Zugriff auf ein Namen nicht mehr in Konstanter Zeit möglich.
+
+#### Tries mit Hashing
+Nur Referenz auf Eltern Knoten wird gespeichert. Man verwendet eine Hashfunktion um zu Kind mit bestimmten Namen zu gelangen. Die größe des Wörterbuches bestimmt die größe der Hashtable.
 # Amortisierte Laufzeitanalyse
-- Aggregat-Methode
-- Worst-Case Laufzeit
-- Verwende Potentialfunktionen
+Teure Operationen werden u.U seltener Ausgeführt. Z.b vergrößern des Stacks (wird nicht immer vergrößert). Es gibt soviele Operationen, dass die Teuren Operationen im Durchscnitt keine Rolle spielen.
+## Stack
+Array wird vergrößert, wenn Array voll ist (doppelt so groß) und verkleinert, wenn nur nioch 1/3 Elemente vorhanden sind: (1/3 ergbit sich daraus, dass Kosten nihct negativ werden) 
+### Aggregat-Methode 
+Man guckt sich an, was man für Kosten hat und summiert diese auf.
+Man hat Kosten $c_i$ für das Einfügen = 1, Es müssen aber Elemente Kopiert
+![](2023-01-07-11-48-02.png)
+Die Kosten für das Einfügen und Kopieren: $\Sigma_{i=0}^n c_i = n + \Sigma_{j=0}^{log(n)} 2^j \leq n+2^{log(n)+1}-1 = n+2(n-1)-1 =3n \in \O(n)$ -> Das ergibt sich aus der Geometrischen Reihe. Jetzt noch die Durchschnittlichen Kosten nehmen: $O(n)/N= O(1)$
+Kosten für das Löschen sind 1. Das sind dann auch $O(n)/n=O(1)$
+### Account Methode (Buchhaltermethode)
+Die Account Methode weist jeder Operation Kosten zu. Gegeben sind $t_i,a_i$ wobei t die tatsächlichen und a die Amortisierten Kosten darstellen.
+Falls $t_i < a_i$: schreibe überschuss auf Konto gut und falls $t_i > a_i$ dann Zahle Differenz vom Konto. Der Kontostand darf auch niemals negativ werden.
+Beispiel: Man nimmt 2€ für die amortisierten Kosten für Push. Jede Push und Pop Operatione kostet 1. Bevor Pop gemacht werden kann müssen schon Elemente drauf sein. (1€ Push + 1€ auf der Bank). Die Pop operation wird dann mit dem Geld von der Bank bezahlt. $\Sigma_{i=1}^n a_i - \Sigma{i=1}^n t_i \geq 0 \Rightarrow \Sigma_{i=1}^n a_i \geq \Sigma{i=1}^n t_i$. (Ammortisierte Kosten sind obere Schranke)
 
-## Account Methode
-- jede Push Operation kostet, wenn kein Element mehr reinpasst -> Array verdoppeln
-- Beim entfernen von Elementen halbiere Array
-- halbiere größe, wenn Array nur noch 1/4 gefüllt ist
-- Splay Bäume
+### PotentialMethode
+Eine erweiterung der Accountmethode, wobei das Bankguthaben als Physikalische Größe aufgefasst wird.
+Dieses Potential beschreibt den Augenblicklichen Zustand der Datenstruktur.
+In der Praxis nutzt man $\Phi_0 = 0$ und $\Phi_i \geq \Phi_0$.
+$\Sigma_{i=1}^n a_i = t_i + \Delta\Phi_n$, wobei $ \Delta \Phi_n = \Phi_{n-1} \Rightarrow \Sigma_{i=1}^n t_i = \Sigma_{i=1}^n a_i - (\Phi_n-\Phi_0) \leq \Sigma_{i=1}^n a_i$: Formel ergibt sich aus der Teleskop Summe und Ammortisierte Kosten sind wieder oberere Schranke.
+Für den Stack definiert man die Potentialfunktion $\Phi(S) = 2 \cdot num(S) - size(S)$, wobei $num$ die Anzahl der Elemente ist und $size$ die größe des Arrays ist. Diese Definition sorgt in den Fällen für Stacks nähmlich Array wird vergrößert oder wird nicht vergrößert dafür, dass die Potentialfunktion nicht negativ wird.
+Die tatsächlichen Kosten für push und pop sind 1 $t_i = 1$ ist.
+1. Für nicht-vergrößert gilt: $size_i = size_{i-1}$. 
+2. Für vergrößert gilt: $size_i/2 = size_{i-1} = num_i-1$
+Einsetzen in $a_i = t_i + \Phi_i - \Phi_{i-1}$
+Halbieren bei reduce funktioniert nicht, da $\Theta(n)$ bei jeder Reduce Operation.
+Array bei 1/4 füllgrad reduzieren geht auch nicht, da die Potentialfunktion negativ werden würde.
+V)erwende stattdessen neue Potentialfunktion die einen Füllgrad $\alpha(S) = num(S)/size(S)$ hat.
+![](2023-01-08-15-02-04.png)
+1. $\alpha = 1/2$: Der Stack ist halb gefüllt, Potentialfunktion = 0
+2. $\alpha = 1$: Der Stack ist komplett gefüllt $size(S) = num(S)$
+3. $\alpha = 1/4$, dann ist $size(S) = 4 \cdot num(S)$ und der Wert der Potentialfunktion ist $num(S)$
+#### Wie sehen die Push und Pop Oerationen mit der neuen Potentialfunktion aus?
+Pop: $num_i = num_{i-1}-1$
+1. Keine Verkleinerung: $size_i = size_{i-1}$ Einsetzen ergibt 2
+2. Verkleinerung: $size_i/2 = size_{i-1}/4 = num_i+1$ ergibt 1
+3. $\alpha_{i-1} \geq 1/2$ ergibt -1
 
+Push: $num_i = num_{i-1}+1$
+1. $\alpha_{i-1} < 1/2$ Keine Vergrößerung, da diese nur bei $\alpha_{i-1} = 1$ erfolgt, $size_i = size_{i-1}$ = 0
+2. $\alpha_{i-1} \geq 1/2$ wie die reguläre Potentialfunktion hat wert 3.
+3. 
 ### Selbstanordnende Listen
-- häufig benutzte Elemente sollten am Anfang der Liste platziert werden
+Häufig benutzte Elemente sollten am Anfang der Liste platziert werden. gegeben ist eine Lineare verkettete Liste und gesucht wird ein effizientes suchen, einfügen und Löschen.
+Das Problem ist, das Zugriffshäufigkeiten nicht im vorhinein bekannt sind.
+Es gibt 3 Methoden dies zu tun.
+1. Move-To-Front Regel (MF)
+2. Transpose (T)
+3. Frequency Count (FC)
 
+#### Move-To-Front 
+Das Element auf das Zugegriffen wurde, wird an den Anfang der Liste gebracht, während alle anderen Elemente unverändert bleiben.
+
+#### Transpose
+Das Element auf das zugegriffen wurde, wird mit dem unmittelbaren vorgänger getauscht.
+
+#### Frequency Count
+Jedem Element wird ein Häufigkeitszähler zugewiesen. Nach jedem Zugriff auf ein Element wird dessen HZäufigkeitszähler hochgezählt. Die Elemente werden dann in Absteigender Reihenfolge der Häufigkeitszähler sortiert. (Erfordert zusätzlichen Speicher)
+
+#### Optimale Strategie
+Schwirig zu beantworten, da es neben der Zugriffshäufigkeit auf auf die Lokalität der Daten ankommt. Man versucht die verscheidenen Strategien relativ zueinander zu beantworten.
+Wir haben eine Liste aus N Elementen gegeben auf der man eine Folge $s=s_1,...,s_m$ mit m Zugriffsoperationen durchführen will. A iist der Algorithmus der die Operationen durchführt wie die MF, oder T-Regel. $C_A(s)$ bezeichnet die Gesamte Schrittzahl zur Ausführung aller Zugriffsoperationen der Folge $s$. Zugriffszeit auf Element an Stelle $i$ braucht $i $Schritte. Notwendige Vertauschungen sind Kostenfrei,wenn diese mit Linkem Nachbarn getauscht werden, sonst sind diese Kostenbehaftet mit dem Wert 1.
+1. $C_A(s_i)$: Anzhal Schritte von Algorithmus A 
+2. $F_A(s_i)$: Anzahl Kostenfreier vertauschungen
+3. $X_A(s_i)$: Anzahl Kostenbehafteter Vertauschungen
+
+MF, T und FC machen keine kostenbehafteten Vertauschungen: $X_{MF} = X_{T} = X_{FC} = 0$
+Wenn man auf Element $i$ Zugreift, kann ma maximal $i-1$ Elemente kostenfrei vertauschen: -> $F_A(s) \leq C_A(s)-m$
+
+#### inversionen
+Gegeben: 2 Listen L1 und L2
+inverison ist die Anzahl der paare beider listen $(x_i,x_j)$ deren Anordnung in der 2. Liste eine andere ist.
 ### Wie bringt man Elemente weiter nach vorne?
 - Keine optimale Strategie, Zugriffshäufigkeiten sind im vorhinein nicht bekannt
 - Frequency Count, Transpose, Move to Front Regeln
